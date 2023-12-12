@@ -8,6 +8,7 @@
 #-------------------------------------------------------------------------------
 #  Puche 2021                                              GNU GPLv3
 #  leiweibau 2023                                          GNU GPLv3
+#  danveitch76 2023                                          GNU GPLv3
 #-------------------------------------------------------------------------------
 
 #===============================================================================
@@ -35,6 +36,8 @@ import requests
 import time
 import pwd
 import glob
+import uuid
+import paho.mqtt.publish as publish
 
 #===============================================================================
 # CONFIG CONSTANTS
@@ -45,6 +48,7 @@ PIALERT_WEBSERVICES_LOG = PIALERT_PATH + "/log/pialert.webservices.log"
 STOPPIALERT = PIALERT_PATH + "/db/setting_stoppialert"
 PIALERT_DB_FILE = PIALERT_PATH + "/db/pialert.db"
 REPORTPATH_WEBGUI = PIALERT_PATH + "/front/reports/"
+MQTT_UUID = uuid.uuid4()
 
 if (sys.version_info > (3,0)):
     exec(open(PIALERT_PATH + "/config/version.conf").read())
@@ -153,6 +157,11 @@ def sending_notifications_test (_Mode):
         send_webgui_test (notiMessage)
     else :
         print ('    Skip WebGUI...')        
+    if REPORT_MQTT or REPORT_MQTT_WEBMON:
+        print ('    Sending report by MQTT...')
+        send_mqtt_test (notiMessage)
+    else :
+        print ('    Skip MQTT...')
     return 0
 
 #-------------------------------------------------------------------------------
@@ -224,6 +233,35 @@ def send_webgui_test (_notiMessage):
         f.write(_notiMessage)
         f.close()
     set_pia_reports_permissions()
+
+#-------------------------------------------------------------------------------
+def send_mqtt_test (_notiMessage):    # Settings for sending MQTT to Broker
+    broker = MQTT_BROKER
+    port = int(MQTT_PORT)
+
+    #Topic to Publish
+    topic = MQTT_TOPIC
+    uuid = str(MQTT_UUID)
+
+    # Generate a Client ID with the publish prefix.
+    client_id = f'publish-pi.alert-{str(uuid)}'
+
+    # Generate Message Details for HomeAssistant Notification sending
+    title = 'Pi.Alert Notification'
+    host_name = 'Pi.Alert'
+
+    timestamp = str(time.strftime("%Y-%m-%dT%H:%M:%S%z"))
+
+    # Remove one linebrake between "Server" and the headline of the event type
+    _mqtt_Text = _notiMessage.replace('\n\n\n', '\n\n')
+
+    body = _mqtt_Text
+
+    # Generate JSON for message delivery for HomeAssistant Notification sending
+    message = "{\"title\":\"" + title + "\",\"message\":\"" + body + "\",\"host_name\":\"" + host_name + "\",\"timestamp\":\"" + timestamp + "\",\"uuid\":\"" + uuid + "\"}"
+    #print(message)
+
+    publish.single(topic, payload = message, hostname = broker, port = port, client_id = client_id, retain = True)
 
 #-------------------------------------------------------------------------------
 def remove_tag (pText, pTag):

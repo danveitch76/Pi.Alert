@@ -395,11 +395,13 @@ install_python() {
       pip3 -q install fritzconnection --break-system-packages --no-warn-script-location         2>&1 >> "$LOG"
       pip3 -q install routeros_api --break-system-packages --no-warn-script-location            2>&1 >> "$LOG"
       pip3 -q install pyunifi --break-system-packages --no-warn-script-location                 2>&1 >> "$LOG"
+	  pip3 -q install paho-mqtt --break-system-packages --no-warn-script-location                 2>&1 >> "$LOG"
     else
       pip3 -q install mac-vendor-lookup  --no-warn-script-location                              2>&1 >> "$LOG"
       pip3 -q install fritzconnection --no-warn-script-location                                 2>&1 >> "$LOG"
       pip3 -q install routeros_api --no-warn-script-location                                    2>&1 >> "$LOG"
       pip3 -q install pyunifi --no-warn-script-location                                         2>&1 >> "$LOG"
+	  pip3 -q install paho-mqtt --no-warn-script-location                                         2>&1 >> "$LOG"
     fi
 
     PYTHON_BIN="python3"
@@ -459,7 +461,7 @@ download_pialert() {
   fi
   
   print_msg "- Downloading installation tar file..."
-  URL="https://github.com/leiweibau/Pi.Alert/raw/main/tar/pialert_latest.tar"
+  URL="https://github.com/danveitch76/Pi.Alert/raw/main/tar/pialert_latest.tar"
   # Testing
   # ----------------------------------
   #URL=""

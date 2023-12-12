@@ -4,9 +4,10 @@
 #
 #  maintenance.php - Front module. Server side. Manage Devices
 #------------------------------------------------------------------------------
-#  Puche      2021        pi.alert.application@gmail.com   GNU GPLv3
-#  jokob-sk   2022        jokob.sk@gmail.com               GNU GPLv3
-#  leiweibau  2023        https://github.com/leiweibau     GNU GPLv3
+#  Puche       2021        pi.alert.application@gmail.com   GNU GPLv3
+#  jokob-sk    2022        jokob.sk@gmail.com               GNU GPLv3
+#  leiweibau   2023        https://github.com/leiweibau     GNU GPLv3
+#  danveitch76 2023        https://github.com/danveitch76   GNU GPLv3
 #-------------------------------------------------------------------------- -->
 
 <?php
@@ -51,14 +52,14 @@ if ($MAC_IGNORE_LIST_LINE == "" || $MAC_IGNORE_LIST_LINE == "[]") {$MAC_IGNORE_L
 // Get Notification Settings --------------------------------------------------
 $CONFIG_FILE_SOURCE = "../config/pialert.conf";
 $CONFIG_FILE_KEY_LINE = file($CONFIG_FILE_SOURCE);
-$CONFIG_FILE_FILTER_VALUE_ARP = array_values(preg_grep("/(REPORT_MAIL|REPORT_NTFY|REPORT_WEBGUI|REPORT_PUSHSAFER|REPORT_PUSHOVER|REPORT_TELEGRAM)(?!_)/i", $CONFIG_FILE_KEY_LINE));
-$CONFIG_FILE_FILTER_VALUE_WEB = array_values(preg_grep("/(REPORT_MAIL_WEBMON|REPORT_NTFY_WEBMON|REPORT_WEBGUI_WEBMON|REPORT_PUSHSAFER_WEBMON|REPORT_PUSHOVER_WEBMON |REPORT_TELEGRAM_WEBMON)/i", $CONFIG_FILE_KEY_LINE));
+$CONFIG_FILE_FILTER_VALUE_ARP = array_values(preg_grep("/(REPORT_MAIL|REPORT_NTFY|REPORT_WEBGUI|REPORT_PUSHSAFER|REPORT_PUSHOVER|REPORT_TELEGRAM|REPORT_MQTT)(?!_)/i", $CONFIG_FILE_KEY_LINE));
+$CONFIG_FILE_FILTER_VALUE_WEB = array_values(preg_grep("/(REPORT_MAIL_WEBMON|REPORT_NTFY_WEBMON|REPORT_WEBGUI_WEBMON|REPORT_PUSHSAFER_WEBMON|REPORT_PUSHOVER_WEBMON |REPORT_TELEGRAM_WEBMON |REPORT_MQTT_WEBMON)/i", $CONFIG_FILE_KEY_LINE));
 
 function format_notifications($source_array) {
 	$format_array_true = array();
 	$format_array_false = array();
-	$text_reference = array('WEBGUI', 'TELEGRAM', 'MAIL', 'PUSHSAFER', 'PUSHOVER', 'NTFY');
-	$text_format = array('WebGUI', 'Telegram', 'Mail', 'Pushsafer', 'Pushover', 'NTFY');
+	$text_reference = array('WEBGUI', 'TELEGRAM', 'MAIL', 'PUSHSAFER', 'PUSHOVER', 'NTFY', 'MQTT');
+	$text_format = array('WebGUI', 'Telegram', 'Mail', 'Pushsafer', 'Pushover', 'NTFY', 'MQTT');
 	for ($x = 0; $x < sizeof($source_array); $x++) {
 		$temp = explode("=", $source_array[$x]);
 		$temp[0] = trim($temp[0]);

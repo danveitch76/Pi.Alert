@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/bin/bash
 # ------------------------------------------------------------------------------
 #  Pi.Alert
 #  Open Source Network Guard / WIFI & LAN intrusion detector 
@@ -12,11 +12,7 @@
 # ------------------------------------------------------------------------------
 # Variables
 # ------------------------------------------------------------------------------
-if [ "$1" = "--lxc" ]; then
-  INSTALL_DIR="/opt"
-else
-  INSTALL_DIR="$HOME"
-fi
+INSTALL_DIR="$HOME"
 PIALERT_HOME="$INSTALL_DIR/pialert"
 LOG="pialert_update_`date +"%Y-%m-%d_%H-%M"`.log"
 PYTHON_BIN=python3
@@ -172,7 +168,7 @@ download_pialert() {
   fi
 
   print_msg "- Downloading update file..."
-  URL="https://github.com/leiweibau/Pi.Alert/raw/main/tar/pialert_latest.tar"
+  URL="https://github.com/danveitch76/Pi.Alert/raw/main/tar/pialert_latest.tar"
   wget -q --show-progress -O "$INSTALL_DIR/pialert_latest.tar" "$URL"
 
   print_msg "- Uncompressing tar file"
@@ -393,6 +389,7 @@ check_python_version() {
     check_and_install_package "fritzconnection"
     check_and_install_package "routeros_api"
     check_and_install_package "pyunifi"
+	check_and_install_package "paho-mqtt"
   else
     print_msg "Python 3 NOT installed"
     process_error "Python 3 is required for this application"

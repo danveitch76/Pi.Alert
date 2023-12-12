@@ -69,7 +69,7 @@ Two upcoming themes will look like this:
   - Scan the network searching connected devices using the scanning methods described earlier
   - Checks the reachability of web services and informs about SSL certificate changes
   - Store the information in the DB
-  - Report the changes detected by e-mail and/or other services ([Pushsafer](https://www.pushsafer.com/), [Pushover](https://pushover.net/), NTFY, Gotify and Telegram via [shoutrrr](https://github.com/containrrr/shoutrrr/)) and to the Frontend
+  - Report the changes detected by e-mail and/or other services ([Pushsafer](https://www.pushsafer.com/), [Pushover](https://pushover.net/), NTFY, MQTT, Gotify and Telegram via [shoutrrr](https://github.com/containrrr/shoutrrr/)) and to the Frontend
   - automated DB cleanup tasks
   - a [pialert-cli](docs/PIALERTCLI.md) that helps to configure login, password and some other things
   - Additional information

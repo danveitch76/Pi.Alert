@@ -9,6 +9,7 @@
 #  Puche 2021                                              GNU GPLv3
 #  leiweibau 2023                                          GNU GPLv3
 #  piapiacz, hspindel
+#  danveitch76 2023                                        GNU GPLv3
 #-------------------------------------------------------------------------------
 
 #===============================================================================
@@ -24,7 +25,8 @@ from base64 import b64encode
 from urllib.parse import urlparse
 from cryptography import x509
 from cryptography.hazmat.backends import default_backend
-import sys, subprocess, os, re, datetime, sqlite3, socket, io, smtplib, csv, requests, time, pwd, glob, ipaddress, ssl, json
+import sys, subprocess, os, re, datetime, sqlite3, socket, io, smtplib, csv, requests, time, pwd, glob, ipaddress, ssl, json, uuid
+import paho.mqtt.publish as publish
 
 #===============================================================================
 # CONFIG CONSTANTS
@@ -35,6 +37,7 @@ PIALERT_WEBSERVICES_LOG = PIALERT_PATH + "/log/pialert.webservices.log"
 STOPPIALERT = PIALERT_PATH + "/db/setting_stoppialert"
 PIALERT_DB_FILE = PIALERT_PATH + "/db/pialert.db"
 REPORTPATH_WEBGUI = PIALERT_PATH + "/front/reports/"
+MQTT_UUID = uuid.uuid4()
 
 if (sys.version_info > (3,0)):
     exec(open(PIALERT_PATH + "/config/version.conf").read())
@@ -2569,6 +2572,68 @@ def send_webgui (_Text):
         f.close()
     set_pia_reports_permissions()
 
+#-------------------------------------------------------------------------------
+def send_mqtt (_Text):    # Settings for sending MQTT to Broker
+    broker = MQTT_BROKER
+    port = int(MQTT_PORT)
+
+    #Topic to Publish
+    topic = MQTT_TOPIC
+    uuid = str(MQTT_UUID)
+
+    # Generate a Client ID with the publish prefix.
+    client_id = f'publish-pi.alert-{str(uuid)}'
+
+    # Generate Message Details for HomeAssistant Notification sending
+    title = 'Pi.Alert Notification'
+    host_name = 'Pi.Alert'
+
+    timestamp = str(time.strftime("%Y-%m-%dT%H:%M:%S%z"))
+
+    # Remove one linebrake between "Server" and the headline of the event type
+    _mqtt_Text = _Text.replace('\n\n\n', '\n\n')
+
+    # extract event type headline to use it in the notification headline
+    findsubheadline = _mqtt_Text.split('\n')
+    subheadline = findsubheadline[3]
+
+    body = _mqtt_Text
+
+    # Count Instances
+    disconnected_count = _mqtt_Text.count('Disconnected')
+    connected_count = _mqtt_Text.count('Connected')
+    new_count = _mqtt_Text.count('Name: ',0,(body.find('Events')-1))
+
+    # Set Title to type of event
+    title = title + ' - ' + subheadline
+
+    # Prepare Summary details
+    body = findsubheadline[0] + ', ' + findsubheadline[1].replace('      ',' ') + ' - '
+    if new_count > 0 :
+        body = body + str(new_count) + ' new device'
+        if new_count > 1 :
+            body = body + 's'
+    if connected_count > 0 :
+        if new_count > 0 :
+            body = body + ', '
+        body = body + str(connected_count) + ' connected device'
+        if connected_count > 1 :
+            body = body + 's'
+    if disconnected_count > 0 :
+        if new_count > 0 and connected_count == 0 :
+            body = body + ', '
+        if connected_count > 0 :
+            body = body + ', '
+        body = body + str(disconnected_count) + ' disconnected device'
+        if disconnected_count > 1 :
+            body = body + 's'
+    body = body + '.'
+
+    # Generate JSON for message delivery for HomeAssistant Notification sending
+    message = "{\"title\":\"" + title + "\",\"message\":\"" + body + "\",\"host_name\":\"" + host_name + "\",\"timestamp\":\"" + timestamp + "\",\"uuid\":\"" + uuid + "\"}"
+
+    publish.single(topic, payload = message, hostname = broker, port = port, client_id = client_id, retain = True)
+
 #===============================================================================
 # Sending Notofications
 #===============================================================================
@@ -2605,6 +2670,11 @@ def sending_notifications (_type, _html_text, _txt_text):
             send_webgui (_txt_text)
         else :
             print ('    Skip WebUI...')
+        if REPORT_MQTT_WEBMON :
+            print ('    Sending report by MQTT...')
+            send_mqtt (_txt_text)
+        else :
+            print ('    Skip MQTT...')
     elif _type == 'pialert' or _type == 'rogue_dhcp' or _type == 'icmp_mon' :
         if REPORT_MAIL :
             print ('    Sending report by email...')
@@ -2636,7 +2706,12 @@ def sending_notifications (_type, _html_text, _txt_text):
             send_webgui (_txt_text)
         else :
             print ('    Skip WebUI...')
-
+        if REPORT_MQTT :
+            print ('    Sending report by MQTT...')
+            send_mqtt (_txt_text)
+        else :
+            print ('    Skip MQTT...')
+            
 #-------------------------------------------------------------------------------
 def format_report_section (pActive, pSection, pTable, pText, pHTML):
     global mail_text
