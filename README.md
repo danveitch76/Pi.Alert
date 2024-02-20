@@ -71,7 +71,7 @@ The backend is started at regular intervals via cronjobs of the user who install
   - Scan the network searching connected devices using the scanning methods described earlier
   - Checks the reachability of web services and informs about SSL certificate changes
   - Store the information in the DB
-  - Report the changes detected by e-mail and/or other services ([Pushsafer](https://www.pushsafer.com/), [Pushover](https://pushover.net/), NTFY, Gotify and Telegram via [shoutrrr](https://github.com/containrrr/shoutrrr/)) and to the Frontend
+  - Report the changes detected by e-mail and/or other services ([Pushsafer](https://www.pushsafer.com/), [Pushover](https://pushover.net/), NTFY, MQTT, Gotify and Telegram via [shoutrrr](https://github.com/containrrr/shoutrrr/)) and to the Frontend
   - automated DB cleanup tasks
   - Optional speed tests of the Internet connection
   - a [pialert-cli](docs/PIALERTCLI.md) that helps to configure login, password and some other things

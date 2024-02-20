@@ -214,6 +214,23 @@ $help_lang['Cat_General_107_text'] = 'The file <span class="text-maroon help_faq
 									        <td class="help_table_gen_b">    </td></tr>
 									</table>
 									<table class="help_table_gen">
+			    						<tr><td class="help_table_gen_section" colspan="2">MQTT</td></tr>
+									    <tr><td class="help_table_gen_a">REPORT_MQTT</td>
+									        <td class="help_table_gen_b">Enables/disables the notifications about changes in the network via MQTT.</td></tr>
+									    <tr><td class="help_table_gen_a">REPORT_MQTT_WEBMON</td>
+									        <td class="help_table_gen_b">Enables/disables the notifications about changes in the monitored web services via MQTT.</td></tr>
+									    <tr><td class="help_table_gen_a">MQTT_BROKER</td>
+									        <td class="help_table_gen_b">Address of the MQTT Broker; can be IP or Hostname.</td></tr>
+									    <tr><td class="help_table_gen_a">MQTT_PORT</td>
+									        <td class="help_table_gen_b">Port of the MQTT Broker.</td></tr>
+									    <tr><td class="help_table_gen_a">MQTT_TOPIC</td>
+									        <td class="help_table_gen_b">Topic to publish to MQTT.</td></tr>
+									    <tr><td class="help_table_gen_a">MQTT_USER</td>
+									        <td class="help_table_gen_b">(NOT USED)</td></tr>
+									    <tr><td class="help_table_gen_a">MQTT_PASSWORD</td>
+									        <td class="help_table_gen_b">(NOT USED)</td></tr>
+									</table>
+									<table class="help_table_gen">
 									    <tr><td class="help_table_gen_section" colspan="2">Shoutrrr</td></tr>
 									    <tr><td class="help_table_gen_a">SHOUTRRR_BINARY</td>
 									        <td class="help_table_gen_b">Here you have to configure which binary of shoutrrr has to be used. This depends on the hardware Pi.Alert was installed on.</td></tr>

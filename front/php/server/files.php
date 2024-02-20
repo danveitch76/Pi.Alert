@@ -5,7 +5,8 @@
 //
 //  file.php - Back module. Server side. FileSystem Operations
 //------------------------------------------------------------------------------
-//  leiweibau  2023        https://github.com/leiweibau     GNU GPLv3
+//  leiweibau   2023        https://github.com/leiweibau     GNU GPLv3
+//  danveitch76 2023        https://github.com/danveitch76   GNU GPLv3
 //------------------------------------------------------------------------------
 
 session_start();
@@ -257,6 +258,16 @@ SHOUTRRR_BINARY    = '" . $configArray['SHOUTRRR_BINARY'] . "'
 REPORT_TELEGRAM         = " . convert_bool($configArray['REPORT_TELEGRAM']) . "
 REPORT_TELEGRAM_WEBMON  = " . convert_bool($configArray['REPORT_TELEGRAM_WEBMON']) . "
 TELEGRAM_BOT_TOKEN_URL  = '" . $configArray['TELEGRAM_BOT_TOKEN_URL'] . "'
+
+# MQTT
+#---------------------------
+REPORT_MQTT         = " . convert_bool($configArray['REPORT_MQTT']) . "
+REPORT_MQTT_WEBMON  = " . convert_bool($configArray['REPORT_MQTT_WEBMON']) . "
+MQTT_BROKER			= '" . $configArray['MQTT_BROKER'] . "'
+MQTT_PORT			= '" . $configArray['MQTT_PORT'] . "'
+MQTT_TOPIC          = '" . $configArray['MQTT_TOPIC'] . "'
+# MQTT_USER			= '" . $configArray['MQTT_USER'] . "'
+# MQTT_PASSWORD	    = '" . $configArray['MQTT_PASSWORD'] . "'
 
 # DynDNS and IP
 # ----------------------
