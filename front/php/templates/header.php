@@ -44,7 +44,7 @@ require 'php/templates/language/' . $pia_lang_selected . '.php';
   <!-- Theme style -->
   <link rel="stylesheet" href="lib/AdminLTE/dist/css/AdminLTE.min.css">
   <!-- AdminLTE Skins. -->
-  <link rel="stylesheet" href="lib/AdminLTE/dist/css/skins/<?=$pia_skin_selected;?>.min.css">
+  <?=$skin_selected_head;?>
   <!-- Pi.Alert CSS -->
   <link rel="stylesheet" href="css/pialert.css?<?=$conf_data['VERSION_DATE'];?>">
   <!-- Offline Font -->
@@ -59,29 +59,13 @@ require 'php/templates/language/' . $pia_lang_selected . '.php';
 <?php
 if ($ENABLED_DARKMODE === True) {
 	echo '<link rel="stylesheet" href="css/dark-patch.css?' . $conf_data['VERSION_DATE'] . '">';
-	$BACKGROUND_IMAGE_PATCH = 'style="background-image: url(\'img/boxed-bg-dark.png\');"';
-} else {
-	$BACKGROUND_IMAGE_PATCH = 'style="background-image: url(\'img/background.png\');"';
+}
+if ($ENABLED_THEMEMODE === True) {
+	echo $theme_selected_head;
 }
 ?>
   <!-- Servertime to the right of the hostname -->
   <script>
-    var pia_servertime = new Date(<?php echo date("Y, n, j, G, i, s") ?>);
-
-    function show_pia_servertime() {
-        if (!document.getElementById) {
-            return;
-        }
-        var pia_hour = pia_servertime.getHours();
-        var pia_minute = pia_servertime.getMinutes();
-        var pia_second = pia_servertime.getSeconds();
-        pia_servertime.setSeconds(pia_second + 1);
-        if (pia_hour <= 9) { pia_hour = "0" + pia_hour; }
-        if (pia_minute <= 9) { pia_minute = "0" + pia_minute; }
-        if (pia_second <= 9) { pia_second = "0" + pia_second; } realtime_pia_servertime = "(" + pia_hour + ":" + pia_minute + ":" + pia_second + ")";
-        if (document.getElementById) { document.getElementById("PIA_Servertime_place").innerHTML = realtime_pia_servertime; } setTimeout("show_pia_servertime()", 1000);
-    }
-
     if (window.navigator.standalone || document.referrer.includes("android-app://") ||  window.matchMedia("(display-mode: standalone)").matches) {
       document.addEventListener("visibilitychange", () => {
         if (document.visibilityState === "visible") {
@@ -93,7 +77,7 @@ if ($ENABLED_DARKMODE === True) {
 </head>
 
 <!-- Layout Boxed Yellow -->
-<body class="hold-transition <?=$pia_skin_selected;?> sidebar-mini" <?=$BACKGROUND_IMAGE_PATCH;?> onLoad="show_pia_servertime();" >
+<?=$skin_selected_body;?>
 <!-- Site wrapper -->
 <div class="wrapper">
 
@@ -115,7 +99,6 @@ if ($ENABLED_DARKMODE === True) {
       </a>
 <?php
 insert_back_button();
-$PIALERTLOGO_LINK = set_iconcolor_for_skin($pia_skin_selected);
 ?>
       <a id="navbar-reload-button" href="" role="button" onclick="window.location.href=window.location.href" style="">
         <i class="fa fa-repeat"></i>
@@ -130,14 +113,14 @@ $PIALERTLOGO_LINK = set_iconcolor_for_skin($pia_skin_selected);
         <ul class="nav navbar-nav">
 
           <!-- Server Name -->
-          <li><a style="pointer-events:none; display: inline-block; height: 50px; padding-top: 15px"><?php echo gethostname(); ?> <span id="PIA_Servertime_place"></span></a></li>
+          <li><div class="a navbar-servertime"><?php echo gethostname(); ?> <span id="PIA_Servertime_place"></span></div></li>
 
           <!-- Header right info -->
           <li class="dropdown user user-menu">
             <!-- Menu Toggle Button -->
             <a href="#" class="dropdown-toggle" data-toggle="dropdown" style="height: 50px; padding-top: 15px">
               <!-- The user image in the navbar-->
-              <img src="img/<?=$PIALERTLOGO_LINK;?>.png" class="user-image" style="border-radius: initial" alt="Pi.Alert Logo">
+              <img src="img/<?=$_SESSION['UserLogo'];?>.png" class="user-image" style="border-radius: initial" alt="Pi.Alert Logo">
               <!-- hidden-xs hides the username on small devices so only the image appears. -->
               <!-- <span class="hidden-xs">Pi.Alert</span> -->
               <span class="label label-danger" id="Menu_Report_Counter_Badge"></span>
@@ -232,13 +215,14 @@ format_temperature($celsius, $temperaturelimit);
           <a href="devices.php">
             <i class="fa fa-laptop"></i>
             <span><?=$pia_lang['Navigation_Devices'];?></span>
-            <span class="pull-right-container">
+            <!-- <span class="pull-right-container"> -->
               <small class="label pull-right bg-yellow" id="header_dev_count_new"></small>
               <small class="label pull-right bg-red" id="header_dev_count_down"></small>
               <small class="label pull-right bg-green" id="header_dev_count_on"></small>
-            </span>
+            <!-- </span> -->
           </a>
         </li>
+        <?php get_devices_filter_list();?>
         <li class=" <?php if (in_array(basename($_SERVER['SCRIPT_NAME']), array('network.php', 'networkSettings.php'))) {echo 'active';}?>">
           <a href="network.php"><i class="fa fa-server"></i> <span><?=$pia_lang['Navigation_Network'];?></span></a>
         </li>
@@ -264,7 +248,15 @@ format_temperature($celsius, $temperaturelimit);
           <a href="help_faq.php"><i class="fa fa-question"></i> <span><?=$pia_lang['Navigation_HelpFAQ'];?></span></a>
         </li>
         <li class=" <?php if (in_array(basename($_SERVER['SCRIPT_NAME']), array('updatecheck.php'))) {echo 'active';}?>">
-          <a href="updatecheck.php"><i class="fa fa-rotate-right"></i> <span> <?=$pia_lang['Navigation_UpdateCheck'];?></span></a>
+          <a href="updatecheck.php">
+            <i class="fa fa-rotate-right"></i>
+            <span> <?=$pia_lang['Navigation_UpdateCheck'];?></span>
+            <?php
+            if ($_SESSION['Auto_Update_Check']) {
+              echo '<small class="label pull-right bg-red" id="header_updatecheck_notification"></small>';
+            }
+            ?>
+          </a>
         </li>
 
       </ul>

@@ -1,5 +1,6 @@
 <?php
 unset($pia_lang);
+
 //////////////////////////////////////////////////////////////////
 // About - Update by @TeroRERO 07ago2022
 //////////////////////////////////////////////////////////////////
@@ -22,6 +23,7 @@ $pia_lang['Gen_Save'] = 'Salvar';
 $pia_lang['Gen_Close'] = 'Cerrar';
 $pia_lang['Gen_on'] = 'On';
 $pia_lang['Gen_off'] = 'Off';
+$pia_lang['Gen_error'] = 'Error';
 
 //////////////////////////////////////////////////////////////////
 // Login Page - Update by @TeroRERO 03ago2022
@@ -89,6 +91,7 @@ $pia_lang['Device_TableHead_LastIPOrder'] = 'Última orden de IP';
 $pia_lang['Device_TableHead_Rowid'] = 'Rowid';
 $pia_lang['Device_TableHead_Status'] = 'Estado';
 $pia_lang['Device_TableHead_ConnectionType'] = 'Connection Type';
+$pia_lang['Device_TableHead_WakeOnLAN'] = 'WoL';
 $pia_lang['Device_Searchbox'] = 'Búsqueda';
 $pia_lang['Device_Tablelenght'] = 'Mostrar _MENU_ entradas';
 $pia_lang['Device_Tablelenght_all'] = 'Todos';
@@ -111,6 +114,13 @@ $pia_lang['Device_bulkDel_info_text'] = 'Con esta función se borran uno o vario
 $pia_lang['Device_bulkDel_back_before'] = 'Número de unidades antes';
 $pia_lang['Device_bulkDel_back_after'] = 'Número actual de unidades';
 $pia_lang['Device_bulkDel_back_hosts'] = 'Direcciones MAC a eliminar';
+$pia_lang['Device_predef_table_filter'] = 'Crear filtro predefinido';
+$pia_lang['Device_del_table_filter_noti'] = 'Eliminar filtro de tabla';
+$pia_lang['Device_del_table_filter_noti_text'] = '¿Desea eliminar el filtro de tabla guardado? Esto solo eliminará la entrada en la barra lateral. Los dispositivos filtrados permanecen sin cambios.';
+$pia_lang['Device_del_table_filtername'] = 'Nombre del filtro';
+$pia_lang['Device_del_table_filterstring'] = 'Filtro';
+$pia_lang['Device_del_table_filtername_help'] = 'Nombre en la barra lateral';
+$pia_lang['Device_del_table_filterstring_help'] = 'Término de búsqueda';
 
 //////////////////////////////////////////////////////////////////
 // Presence Page - Update by @TeroRERO 25jul2022
@@ -254,13 +264,16 @@ $pia_lang['DevDetail_Tools_nmap_buttonFast'] = 'Exploración rápida';
 $pia_lang['DevDetail_Tools_nmap_buttonDefault'] = 'Escaneado predeterminado';
 $pia_lang['DevDetail_Tools_nmap_buttonDetail'] = 'Escaneo detallado';
 $pia_lang['DevDetail_Tools_nmap_buttonFast_text'] = 'Escaneo rápido: escanee menos puertos (100) que el escaneo predeterminado (unos pocos segundos)';
-$pia_lang['DevDetail_Tools_nmap_buttonDefault_text'] = 'Escaneo predeterminado: NMAP escanea los 1,000 puertos principales para cada protocolo de escaneo solicitado. Esto atrapa aproximadamente el 93% de los puertos TCP y el 49% de los puertos UDP. (aproximadamente 5 segundos)';
-$pia_lang['DevDetail_Tools_nmap_buttonDetail_text'] = 'Escaneo detallado: escaneo predeterminado con detección de sistema operativo habilitado, detección de versiones, escaneo de script y traceroute (hasta 30 segundos o más)';
+$pia_lang['DevDetail_Tools_nmap_buttonDefault_text'] = 'Escaneo predeterminado: NMAP escanea los 1,000 puertos principales para cada protocolo de escaneo solicitado. (aproximadamente 5 segundos)';
+$pia_lang['DevDetail_Tools_nmap_buttonDetail_text'] = 'Escaneo detallado: El escaneo se ha ampliado para incluir algunos puertos UDP. Además, se ha aumentado el rango de puertos TCP.';
 $pia_lang['DevDetail_Tools_WOL'] = 'Send Wol command to ';
 $pia_lang['DevDetail_Tools_WOL_noti'] = 'Wake-on-LAN';
 $pia_lang['DevDetail_Tools_WOL_noti_text'] = 'The Wake-on-LAN command is sent to the broadcast address. If the target is not in the subnet/vlan of Pi.Alert, the target device will not respond.';
 $pia_lang['BackDevDetail_Tools_WOL_okay'] = 'The command was executed';
 $pia_lang['BackDevDetail_Tools_WOL_error'] = 'The command was not executed';
+$pia_lang['DevDetail_Speedtest_note_a'] = 'La prueba de velocidad automática comienza a las ';
+$pia_lang['DevDetail_Speedtest_note_b'] = ' y ';
+$pia_lang['DevDetail_Speedtest_note_c'] = ' horas';
 
 //////////////////////////////////////////////////////////////////
 // WebServices Details Page
@@ -355,7 +368,7 @@ $pia_lang['Maintenance_notification_config'] = 'Notifications (Devices, ICMP)';
 $pia_lang['Maintenance_notification_config_webmon'] = 'Notifications (Service Mon.)';
 $pia_lang['Maintenance_Tools_Logviewer_Scan'] = 'Scan';
 $pia_lang['Maintenance_Tools_Logviewer_Scan_empty'] = 'Se está realizando una exploración';
-$pia_lang['Maintenance_Tools_Logviewer_IPLog'] = 'Internet IP';
+$pia_lang['Maintenance_Tools_Logviewer_IPLog'] = 'Internet / Speedtest / Update Check';
 $pia_lang['Maintenance_Tools_Logviewer_IPLog_empty'] = 'No hay protocolo disponible';
 $pia_lang['Maintenance_Tools_Logviewer_Vendor'] = 'Vendor Update';
 $pia_lang['Maintenance_Tools_Logviewer_Vendor_empty'] = 'No hay protocolo disponible';
@@ -460,6 +473,8 @@ $pia_lang['Maintenance_Tool_del_ActHistory'] = 'Eliminar la actividad de la red'
 $pia_lang['Maintenance_Tool_del_ActHistory_text'] = 'El gráfico de actividad de la red se resetea. Esto no afecta a los eventos.';
 $pia_lang['Maintenance_Tool_del_ActHistory_noti'] = 'Borrar la actividad de la red';
 $pia_lang['Maintenance_Tool_del_ActHistory_noti_text'] = '¿Está seguro de restablecer la actividad de la red?';
+$pia_lang['Maintenance_Tool_del_speedtest'] = 'Eliminar resultados del Speedtest';
+$pia_lang['Maintenance_Tool_del_speedtest_text'] = 'Se eliminarán todos los resultados del Speedtest guardados. Los Speedtests automáticos ya configurados continuarán ejecutándose.';
 $pia_lang['Maintenance_Tool_loginenable'] = 'Login activado.';
 $pia_lang['Maintenance_Tool_loginenable_text'] = 'Después de la activación, se le llevará automáticamente a la página de inicio de sesión. Si no has establecido una contraseña antes, "123456" es la contraseña por defecto.';
 $pia_lang['Maintenance_Tool_loginenable_noti'] = 'Login activado.';
@@ -533,6 +548,8 @@ $pia_lang['BackDevices_DBTools_DelActHistory'] = 'Network aktivity reset success
 $pia_lang['BackDevices_DBTools_DelActHistoryError'] = 'Network aktivity reset not successful';
 $pia_lang['BackDevices_DBTools_DelInactHosts'] = 'Se han eliminado los hosts inactivos.';
 $pia_lang['BackDevices_DBTools_DelInactHostsError'] = 'Se ha producido un error al intentar eliminar hosts inactivos.';
+$pia_lang['BackDevices_DBTools_DelSpeedtest'] = 'Los resultados del Speedtest han sido eliminados.';
+$pia_lang['BackDevices_DBTools_DelSpeedtestError'] = 'Error al eliminar los resultados del Speedtest.';
 $pia_lang['BackDevices_Login_disabled'] = 'Login desactivado.';
 $pia_lang['BackDevices_Login_enabled'] = 'Login activado.';
 $pia_lang['BackDevices_Theme_set'] = 'Theme applied';
@@ -550,6 +567,15 @@ $pia_lang['BackDevices_Report_Delete'] = ' Notificación(es) eliminada(s).';
 $pia_lang['BackFiles_FavIcon_invalidURL'] = 'Se ha ingresado una URL no válida.';
 $pia_lang['BackFiles_FavIcon_ErrorURL'] = 'Un FavIcon ingresado manualmente debe ser una URL. Las referencias de ruta para un archivo local no se guardarán.';
 $pia_lang['BackFiles_FavIcon_okay'] = 'El nuevo FavIcon se ha guardado.';
+$pia_lang['BackDevices_table_filter_ok_a'] = 'El filtro ';
+$pia_lang['BackDevices_table_filter_ok_b'] = ' con el valor ';
+$pia_lang['BackDevices_table_filter_ok_c'] = ' ha sido guardado';
+$pia_lang['BackDevices_table_delfilter_ok'] = 'Este filtro ha sido eliminado: ';
+$pia_lang['BackDevices_table_filter_error_a'] = 'El filtro ';
+$pia_lang['BackDevices_table_filter_error_b'] = ' con el valor ';
+$pia_lang['BackDevices_table_filter_error_c'] = ' no se pudo guardar';
+$pia_lang['BackDevices_table_filter_error_d'] = 'No se completaron todos los campos requeridos';
+$pia_lang['BackDevices_table_filter_error_e'] = 'Error al crear la tabla de filtros';
 
 //////////////////////////////////////////////////////////////////
 // Network Page - Update by @TeroRERO 01ago2022
@@ -614,6 +640,7 @@ $pia_lang['Updatecheck_new'] = 'Última versión de Pi.Alert en Github';
 $pia_lang['GeoLiteDB_Title'] = 'Notas de la base de datos GeoLite2';
 $pia_lang['GeoLiteDB_cur'] = 'Base de datos GeoLite2 cargada el';
 $pia_lang['GeoLiteDB_new'] = 'Última base de datos GeoLite2 en Github';
+$pia_lang['Auto_Updatecheck_RN'] = 'Búsqueda de Actualizaciones Automática';
 $pia_lang['Updatecheck_RN'] = 'Notas de actualización de Pi.Alert';
 $pia_lang['Updatecheck_U2D'] = 'Ya estás utilizando la última versión';
 $pia_lang['Updatecheck_RN2'] = 'Pi.Alert Update Check';
@@ -644,6 +671,8 @@ $pia_lang['ookla_devdetails_table_server'] = 'Servidor';
 $pia_lang['ookla_devdetails_table_ping'] = 'Ping';
 $pia_lang['ookla_devdetails_table_down'] = 'Descarga';
 $pia_lang['ookla_devdetails_table_up'] = 'Carga';
+
+$pia_lang['nmap_no_scan_results'] = 'Aucun port ouvert découvert';
 
 // =============================================================================================================
 
@@ -677,6 +706,7 @@ $pia_journ_lang['b_032'] = $pia_journ_lang['a_032'];
 //cronjob
 $pia_journ_lang['c_002'] = $pia_journ_lang['a_002'];
 $pia_journ_lang['c_010'] = $pia_journ_lang['a_010'];
+$pia_journ_lang['c_060'] = $pia_journ_lang['a_060'];
 // LogStrings
 $pia_journ_lang['LogStr_0001'] = 'Entrada agregada';
 $pia_journ_lang['LogStr_0002'] = 'Entrada editada';
@@ -705,6 +735,8 @@ $pia_journ_lang['LogStr_0024'] = 'Eliminar todos los eventos';
 $pia_journ_lang['LogStr_0025'] = 'Eliminar todos los eventos (con error)';
 $pia_journ_lang['LogStr_0026'] = 'Restablecer la actividad de la red';
 $pia_journ_lang['LogStr_0027'] = 'Restablecer la actividad de la red (con error)';
+$pia_journ_lang['LogStr_0028'] = 'Eliminar resultados del Speedtest';
+$pia_journ_lang['LogStr_0029'] = 'Eliminar resultados del Speedtest (con error)';
 $pia_journ_lang['LogStr_0030'] = 'Se agregó componente de red activo (Switch, Router, etc.)';
 $pia_journ_lang['LogStr_0031'] = 'Se editó componente de red activo (Switch, Router, etc.)';
 $pia_journ_lang['LogStr_0032'] = 'Se eliminó componente de red activo (Switch, Router, etc.)';
@@ -712,6 +744,11 @@ $pia_journ_lang['LogStr_0033'] = 'Se agregó dispositivo no escaneable (Hubs, di
 $pia_journ_lang['LogStr_0034'] = 'Se editó dispositivo no escaneable (Hubs, dispositivos PoE, Docker, etc.)';
 $pia_journ_lang['LogStr_0035'] = 'Se eliminó dispositivo no escaneable (Hubs, dispositivos PoE, Docker, etc.)';
 $pia_journ_lang['LogStr_0036'] = 'Dispositivos, servicios web y hosts ICMP exportados en formato CSV.';
+$pia_journ_lang['LogStr_0041'] = 'Error al guardar el filtro predefinido';
+$pia_journ_lang['LogStr_0042'] = 'Se ha guardado el filtro predefinido';
+$pia_journ_lang['LogStr_0043'] = 'El filtro predefinido estaba incompleto y no se guardó';
+$pia_journ_lang['LogStr_0044'] = 'No se pudo crear la tabla de filtros';
+$pia_journ_lang['LogStr_0045'] = 'Se ha eliminado el filtro predefinido';
 $pia_journ_lang['LogStr_0050'] = 'Protección de contraseña de Pi.Alert habilitada';
 $pia_journ_lang['LogStr_0051'] = 'Protección de contraseña de Pi.Alert deshabilitada';
 $pia_journ_lang['LogStr_0052'] = 'Se cambió la configuración de columnas de la lista de dispositivos';
@@ -727,6 +764,8 @@ $pia_journ_lang['LogStr_0062'] = 'No hay actualización de Pi.Alert disponible';
 $pia_journ_lang['LogStr_0063'] = 'Actualización de la base de datos GeoLite2 disponible';
 $pia_journ_lang['LogStr_0064'] = 'No hay actualización de la base de datos GeoLite2 disponible';
 $pia_journ_lang['LogStr_0065'] = 'Base de datos GeoLite2 no instalada';
+$pia_journ_lang['LogStr_0066'] = 'Error: Información de actualización no válida';
+$pia_journ_lang['LogStr_0067'] = 'No se encontró una versión más reciente';
 $pia_journ_lang['LogStr_0101'] = 'Base de datos limpiada y optimizada';
 $pia_journ_lang['LogStr_0210'] = 'Escaneo individual de nmap realizado';
 $pia_journ_lang['LogStr_0251'] = 'Ejecutado Wake-on-lan';

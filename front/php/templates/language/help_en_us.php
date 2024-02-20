@@ -13,7 +13,7 @@ $help_lang['Cat_General_101_text'] = 'It may well be that low-powered devices re
 									 if these devices communicate with the network via WLAN. Solutions here would be to switch to a wired connection if possible or, if the device is only to be used for a limited period of time, to use the arp scan.
 									 pause the arp scan on the maintenance page.';
 $help_lang['Cat_General_102_head'] = 'I get the message that the database is read only.';
-$help_lang['Cat_General_102_text'] = 'Changes may currently be written to the database by the backend. Please try again after a short wait. If the behavior does not change, follow the instructions below.<br><br>
+$help_lang['Cat_General_102_text'] = 'It&apos;s possible that changes are currently being written to the database through the backend. Please try again after a short wait. If you wish to make significant changes to the device list, it is advisable to pause Pi.Alert for the duration of the editing on the settings page. If the behavior persists, follow the instructions below.<br><br>
 									 Check in the Pi.Alert directory if the database folder (db) has been assigned the correct permissions:<br>
       								 <span class="text-maroon help_faq_code">drwxrwxr-x  2 (your username) www-data</span><br>
       								 If the permission is not correct, you can set it again with the following commands in the terminal or the console:<br>
@@ -262,16 +262,16 @@ $help_lang['Cat_General_107_text'] = 'The file <span class="text-maroon help_faq
 									<table class="help_table_gen">
 									    <tr><td class="help_table_gen_section" colspan="2">Automatic Speedtest</td></tr>
 									    <tr><td class="help_table_gen_a">SPEEDTEST_TASK_ACTIVE</td>
-									        <td class="help_table_gen_b"></td></tr>
+									        <td class="help_table_gen_b">Activate/deactivate the automatic speed test. This requires the installation of the Ookla speed test in the "Tools" tab of the "Internet" device. Follow the instructions during installation.</td></tr>
 									    <tr><td class="help_table_gen_a">SPEEDTEST_TASK_HOUR</td>
-									        <td class="help_table_gen_b"></td></tr>
+									        <td class="help_table_gen_b">Full hour, or comma-separated hours, at which the speed test is to be started.</td></tr>
 									</table>
 									<table class="help_table_gen">
 									    <tr><td class="help_table_gen_section" colspan="2">Arp-scan Options & Samples</td></tr>
 									    <tr><td class="help_table_gen_a">MAC_IGNORE_LIST</td>
 									        <td class="help_table_gen_b">
 									            <span class="text-maroon help_faq_code">[&apos;MAC-Address 1&apos;, &apos;MAC-Address 2&apos;]</span><br>
-									            This MAC address(es) (save with small letters) will be filtered out from the scan results.</td></tr>
+									            This MAC address(es) (save with small letters) will be filtered out from the scan results. It is also possible to specify only the beginning of a MAC address. All addresses with the same prefix will also be filtered out</td></tr>
 									    <tr><td class="help_table_gen_a">SCAN_SUBNETS</td>
 									        <td class="help_table_gen_b">
 									        	&lsquo;<span class="text-maroon help_faq_code">--localnet</span>&rsquo;<br>
@@ -329,7 +329,7 @@ $help_lang['Cat_General_107_text'] = 'The file <span class="text-maroon help_faq
 									    <tr><td class="help_table_gen_a">UNIFI_IP</td>
 									        <td class="help_table_gen_b">IP address of the Unifi system.</td></tr>
 									    <tr><td class="help_table_gen_a">UNIFI_API</td>
-									        <td class="help_table_gen_b">Possible UNIFI APIs are v4, v5, unifiOS, UDMP-unifiOS</td></tr>
+									        <td class="help_table_gen_b">Possible UNIFI APIs are v4, v5, unifiOS, UDMP-unifiOS, default</td></tr>
 									    <tr><td class="help_table_gen_a">UNIFI_USER</td>
 									        <td class="help_table_gen_b">Username</td></tr>
 									    <tr><td class="help_table_gen_a">UNIFI_PASS</td>
@@ -352,6 +352,9 @@ $help_lang['Cat_General_108_text'] = '<ol>
 										<li>Follow the instructions.</li>
 										<li>After a successful update, Pi.Alert should start automatically. Alternatively, you can manually restart it on the settings page.</li>
 									</ol>';
+$help_lang['Cat_General_109_head'] = 'What does "(<span style="color:red;">*</span>)" mean next to the last modification date?';
+$help_lang['Cat_General_109_text'] = 'If the journal wants to write an entry to the database while it is currently in use, a buffer file is created, which will be incorporated into the database the next time the journal wants to write to the database. Otherwise, the buffer file continues to be used. This file is used only for the journal.';
+
 $help_lang['Cat_Device_200_head'] = 'I have devices in my list that I do not know about. After deleting them, they always reappear.';
 $help_lang['Cat_Device_200_text'] = 'If you use Pi-hole, please note that Pi.Alert retrieves information from Pi-hole. Pause Pi.Alert, go to the settings page in Pi-hole and
  									delete the DHCP lease if necessary. Then, also in Pi-hole, look under Tools -> Network to see if you can find the recurring hosts there.
@@ -401,13 +404,15 @@ $help_lang['Cat_Service_700_text'] = 'There are 5 different color codes in total
 $help_lang['Cat_Service_701_head'] = 'What are the HTTP status codes?';
 // from json
 $help_lang['Cat_Service_702_head'] = 'What changes are reported?';
-$help_lang['Cat_Service_702_text'] = 'Detectable events are:<br>
-										<ul>
-											<li>Changing the HTTP status code</li>
-											<li>Change IP</li>
-											<li>Response time of the server or the missing of the response.</li>
-										</ul>
-									 Depending on the choice of notification, either everything is reported, or only the absence of a server response.';
+$help_lang['Cat_Service_702_text'] = 'Detectable events include:<br>
+  									<ul>
+  										<li>Change in HTTP status code</li>
+  										<li>Change in IP address</li>
+  										<li>Server response time or lack of response</li>
+  										<li>Changes to the SSL certificate</li>
+  									</ul>
+  								 Depending on the notification choice, either everything is reported, or only the absence of a server response. For changes to the certificate, a code is used, which is calculated as follows.
+  								 In this case, the values 8 = Subject, 4 = Issuer, 2 = Valid from, and 1 = Valid to are assigned to the individual fields. So, a code of 13 means that there were changes in the Subject, Issuer, and Valid to fields.';
 $help_lang['Cat_Service_703_head'] = 'General information about "Web Service Monitoring".';
 $help_lang['Cat_Service_703_text'] = 'The monitoring is based exclusively on the responses of HTTP requests sent to the page. Depending on the state of the server, meaningful error patterns can be detected here. If the server does not respond at all, this is considered as "Down/Offline". These web server requests are performed every 10 min as part of the normal scan.';
 $help_lang['Cat_ServiceDetails_750_head'] = 'I cannot edit all the fields.';

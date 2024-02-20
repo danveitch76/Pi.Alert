@@ -87,17 +87,17 @@ function set_table_headline($service_filter) {
 	global $pia_lang;
 
 	if ($service_filter == 'all') {
-		echo '<h3 class="text-aqua" style="display: inline-block;font-size: 18px; margin: 0; line-height: 1;">' . $pia_lang['WebServices_Events_Shortcut_All'] . '</h3>';
+		echo '<h3 class="text-aqua service_httpcode_box">' . $pia_lang['WebServices_Events_Shortcut_All'] . '</h3>';
 	} elseif ($service_filter == 2) {
-		echo '<h3 class="text-green" style="display: inline-block;font-size: 18px; margin: 0; line-height: 1;">' . $pia_lang['WebServices_Events_Shortcut_HTTP2xx'] . '</h3>';
+		echo '<h3 class="text-green service_httpcode_box">' . $pia_lang['WebServices_Events_Shortcut_HTTP2xx'] . '</h3>';
 	} elseif ($service_filter == 3) {
-		echo '<h3 class="text-yellow" style="display: inline-block;font-size: 18px; margin: 0; line-height: 1;">' . $pia_lang['WebServices_Events_Shortcut_HTTP3xx'] . '</h3>';
+		echo '<h3 class="text-yellow service_httpcode_box">' . $pia_lang['WebServices_Events_Shortcut_HTTP3xx'] . '</h3>';
 	} elseif ($service_filter == 4) {
-		echo '<h3 class="text-yellow" style="display: inline-block;font-size: 18px; margin: 0; line-height: 1;">' . $pia_lang['WebServices_Events_Shortcut_HTTP4xx'] . '</h3>';
+		echo '<h3 class="text-yellow service_httpcode_box">' . $pia_lang['WebServices_Events_Shortcut_HTTP4xx'] . '</h3>';
 	} elseif ($service_filter == 5) {
-		echo '<h3 class="text-yellow" style="display: inline-block;font-size: 18px; margin: 0; line-height: 1;">' . $pia_lang['WebServices_Events_Shortcut_HTTP5xx'] . '</h3>';
+		echo '<h3 class="text-yellow service_httpcode_box">' . $pia_lang['WebServices_Events_Shortcut_HTTP5xx'] . '</h3>';
 	} elseif ($service_filter == "99999999") {
-		echo '<h3 class="text-red" style="display: inline-block;font-size: 18px; margin: 0; line-height: 1;">' . $pia_lang['WebServices_Events_Shortcut_Down'] . '</h3>';
+		echo '<h3 class="text-red service_httpcode_box">' . $pia_lang['WebServices_Events_Shortcut_Down'] . '</h3>';
 	}
 }
 
@@ -282,6 +282,10 @@ function get_service_statistic($service) {
 
 <!-- Main content ---------------------------------------------------------- -->
     <section class="content">
+
+    <div id="sticky-back-button" class="navbar navbar-default navbar-fixed-bottom" style="background-color: #000;">
+      <a class="btn btn-lg btn-default btn-block" href="./services.php" role="button"><?=$pia_lang['Device_Table_nav_prev'];?></a>
+    </div>
 
 <!-- top small boxes -->
       <div class="row">
@@ -880,7 +884,7 @@ function initializeDatatable () {
     // Processing
     'processing'  : true,
     'language'    : {
-      processing: '<table><td width="130px" align="middle">Loading...</td><td><i class="ion ion-ios-loop-strong fa-spin fa-2x fa-fw"></td></table>',
+      processing: '<table><td width="130px" align="middle">Loading...</td><td><i class="ion ion-ios-sync fa-spin fa-2x fa-fw"></td></table>',
       emptyTable: 'No data',
       "lengthMenu": "<?=$pia_lang['Events_Tablelenght'];?>",
       "search":     "<?=$pia_lang['Events_Searchbox'];?>: ",
@@ -917,6 +921,12 @@ function setServiceData(refreshCallback='') {
       refreshCallback();
     }
   });
+
+  // refresh Sidebar
+  setTimeout(function(){
+      updateTotals();
+  }, 1000);
+
 }
 
 // -----------------------------------------------------------------------------

@@ -115,18 +115,16 @@ function get_host_statistic($hostip) {
 
 	$statistic = array();
 
-	$query = "SELECT AVG(icmpeve_avgrtt) FROM ICMP_Mon_Events WHERE icmpeve_avgrtt != 99999 AND icmpeve_avgrtt IS NOT NULL AND icmpeve_ip=\"$hostip\"";
+	$query = "SELECT AVG(icmpeve_avgrtt) FROM ICMP_Mon_Events WHERE icmpeve_avgrtt != 99999 AND icmpeve_avgrtt != '' AND icmpeve_ip='$hostip'";
 	$result = $db->querySingle($query);
 	$statistic['avg_rtt_all'] = round($result, 3) . ' ms';
 
-	$query_max = "SELECT MAX(icmpeve_avgrtt) FROM ICMP_Mon_Events WHERE icmpeve_avgrtt != 99999 AND icmpeve_avgrtt IS NOT NULL AND icmpeve_ip=\"$hostip\"";
+	$query_max = "SELECT MAX(icmpeve_avgrtt) FROM ICMP_Mon_Events WHERE icmpeve_avgrtt != 99999 AND icmpeve_avgrtt != '' AND icmpeve_ip='$hostip'";
 	$result_max = $db->querySingle($query_max);
-//	$statistic['rtt_max_all'] = $pia_lang['WebServices_Stats_Time_max'] . ' ' . round($result_max, 3) . ' ms';
 	$statistic['rtt_max_all'] = '<i class="bi bi-speedometer2 flip-horizontal text-red"></i> ' . round($result_max, 3) . ' ms';
 
-	$query_min = "SELECT MIN(icmpeve_avgrtt) FROM ICMP_Mon_Events WHERE icmpeve_avgrtt != 99999 AND icmpeve_avgrtt IS NOT NULL AND icmpeve_ip=\"$hostip\"";
+	$query_min = "SELECT MIN(icmpeve_avgrtt) FROM ICMP_Mon_Events WHERE icmpeve_avgrtt != 99999 AND icmpeve_avgrtt != '' AND icmpeve_ip='$hostip'";
 	$result_min = $db->querySingle($query_min);
-//	$statistic['rtt_min_all'] = $pia_lang['WebServices_Stats_Time_min'] . ' ' . round($result_min, 3) . ' ms';
 	$statistic['rtt_min_all'] = '<i class="bi bi-speedometer2 text-green"></i> ' . round($result_min, 3) . ' ms';
 
 	$query = "SELECT COUNT(*) AS row_count FROM ICMP_Mon_Events WHERE icmpeve_Present = 0 AND icmpeve_ip=\"$hostip\"";
@@ -138,7 +136,8 @@ function get_host_statistic($hostip) {
 	$statistic['online_all'] = $result;
 
 	$temp100 = $statistic['online_all'] + $statistic['offline_all'];
-	if ($temp100 > 0 && $statistic['online_all'] > 0) {
+	// if ($temp100 > 0 && $statistic['online_all'] > 0) {
+	if ($statistic['online_all'] > 0) {
 		$statistic['online_percent_all'] = round(($statistic['online_all'] * 100 / $temp100), 2);
 	} else {
 		$statistic['online_percent_all'] = 0;
@@ -174,7 +173,7 @@ function get_host_statistic($hostip) {
 	$statistic['offline_24h'] = $offline;
 
 	$temp24h = $statistic['online_24h'] + $statistic['offline_24h'];
-	if ($temp24h > 0 && $statistic['online_24h'] > 0) {
+	if ($statistic['online_24h'] > 0) {
 		$statistic['online_percent_24h'] = round(($statistic['online_24h'] * 100 / $temp24h), 2);
 	} else {
 		$statistic['online_percent_24h'] = 0;
@@ -209,9 +208,9 @@ function get_host_statistic($hostip) {
 	$statistic['online_1w'] = $online;
 	$statistic['offline_1w'] = $offline;
 
-	$temp24h = $statistic['online_1w'] + $statistic['offline_1w'];
-	if ($temp24h > 0 && $statistic['online_1w'] > 0) {
-		$statistic['online_percent_1w'] = round(($statistic['online_1w'] * 100 / $temp24h), 2);
+	$temp1w = $statistic['online_1w'] + $statistic['offline_1w'];
+	if ($statistic['online_1w'] > 0) {
+		$statistic['online_percent_1w'] = round(($statistic['online_1w'] * 100 / $temp1w), 2);
 	} else {
 		$statistic['online_percent_1w'] = 0;
 	}
@@ -236,6 +235,10 @@ function get_host_statistic($hostip) {
     </section>
 
     <section class="content">
+
+     <div id="sticky-back-button" class="navbar navbar-default navbar-fixed-bottom" style="background-color: #000;">
+      <a class="btn btn-lg btn-default btn-block" href="./icmpmonitor.php" role="button"><?=$pia_lang['Device_Table_nav_prev'];?></a>
+    </div>
 
 <!-- top small box --------------------------------------------------------- -->
       <div class="row">
@@ -794,7 +797,7 @@ function initializeDatatable () {
     // Processing
     'processing'  : true,
     'language'    : {
-      processing: '<table><td width="130px" align="middle">Loading...</td><td><i class="ion ion-ios-loop-strong fa-spin fa-2x fa-fw"></td></table>',
+      processing: '<table><td width="130px" align="middle">Loading...</td><td><i class="ion ion-ios-sync fa-spin fa-2x fa-fw"></td></table>',
       emptyTable: 'No data',
       "lengthMenu": "<?=$pia_lang['Events_Tablelenght'];?>",
       "search":     "<?=$pia_lang['Events_Searchbox'];?>: ",
@@ -835,6 +838,12 @@ function setICMPHostData(refreshCallback='') {
       refreshCallback();
     }
   });
+
+  // refresh Sidebar
+  setTimeout(function(){
+      updateTotals();
+  }, 1000);
+
 }
 
 // -----------------------------------------------------------------------------

@@ -11,7 +11,7 @@ $help_lang['Cat_General_100_text_c'] = 'Cerca in questo file l&apos;entrata "<sp
 $help_lang['Cat_General_101_head'] = 'La mia rete sembra rallentare, lo streaming "scatta".';
 $help_lang['Cat_General_101_text'] = 'Potrebbe succedere che dispositivi poco potenti raggiungano i propri limiti di prestazione con il modo in cui Pi.Alert rileva i nuovi dispositivi nella rete. Questo problema si accentua ulteriormente se tali dispositivi comunicano tramite WLAN con la rete. Le soluzioni possibili includono il passaggio a una connessione cablata, se possibile, o la sospensione dell&apos;arp-scan nella pagina di manutenzione se si desidera utilizzare il dispositivo solo per un breve periodo.';
 $help_lang['Cat_General_102_head'] = 'Ricevo un messaggio che il database è in modalità sola lettura (read-only).';
-$help_lang['Cat_General_102_text'] = 'Al momento potrebbero essere in corso modifiche al database da parte del backend. Riprova dopo una breve attesa. Se il comportamento non cambia, segui le istruzioni di seguito.<br><br>
+$help_lang['Cat_General_102_text'] = 'Possibilmente, in questo momento il backend sta scrivendo modifiche nel database. Riprova dopo una breve attesa. Se intendi apportare modifiche significative all&apos;elenco dei dispositivi, è consigliabile mettere in pausa Pi.Alert per la durata della modifica nella pagina delle impostazioni. Se il comportamento persiste, segui le indicazioni riportate di seguito.<br><br>
 									 Verifica nella directory di Pi.Alert se la cartella del database (db) ha i permessi corretti assegnati:<br>
       								 <span class="text-maroon help_faq_code">drwxrwxr-x  2 (tuo nome utente) www-data</span><br>
       								 Se i permessi non sono corretti, puoi reimpostarli con i seguenti comandi nel terminale o nella console:<br>
@@ -240,16 +240,16 @@ $help_lang['Cat_General_107_text'] = 'Il file <span class="text-maroon help_faq_
 									<table class="help_table_gen">
 									    <tr><td class="help_table_gen_section" colspan="2">Automatic Speedtest</td></tr>
 									    <tr><td class="help_table_gen_a">SPEEDTEST_TASK_ACTIVE</td>
-									        <td class="help_table_gen_b"></td></tr>
+									        <td class="help_table_gen_b">Attivare/disattivare il test di velocità automatico. Ciò richiede l&apos;installazione dello speed test di Ookla nella scheda "Strumenti" del dispositivo "Internet". Seguire le istruzioni durante l&apos;installazione.</td></tr>
 									    <tr><td class="help_table_gen_a">SPEEDTEST_TASK_HOUR</td>
-									        <td class="help_table_gen_b"></td></tr>
+									        <td class="help_table_gen_b">Ora intera, o ore separate da virgole, in cui deve essere avviato il test di velocità.</td></tr>
 									</table>
 									<table class="help_table_gen">
 									    <tr><td class="help_table_gen_section" colspan="2">Opzioni e campioni di arp-scan</td></tr>
 									    <tr><td class="help_table_gen_a">MAC_IGNORE_LIST</td>
 									        <td class="help_table_gen_b">
 									            <span class="text-maroon help_faq_code">[&apos;Indirizzo MAC 1&apos;, &apos;Indirizzo MAC 2&apos;]</span><br>
-									            Questi indirizzi MAC (in minuscolo) verranno filtrati dai risultati della scansione.</td></tr>
+									            Questi indirizzi MAC (in minuscolo) verranno filtrati dai risultati della scansione. È anche possibile specificare solo l&apos;inizio di un indirizzo MAC. Tutti gli indirizzi con lo stesso prefisso verranno anch&apos;essi filtrati.</td></tr>
 									    <tr><td class="help_table_gen_a">SCAN_SUBNETS</td>
 									        <td class="help_table_gen_b">
 									            &lsquo;<span class="text-maroon help_faq_code">--localnet</span>&rsquo;<br>
@@ -307,7 +307,7 @@ $help_lang['Cat_General_107_text'] = 'Il file <span class="text-maroon help_faq_
 									    <tr><td class="help_table_gen_a">UNIFI_IP</td>
 									        <td class="help_table_gen_b">Indirizzo IP del sistema UniFi.</td></tr>
 									    <tr><td class="help_table_gen_a">UNIFI_API</td>
-									        <td class="help_table_gen_b">Possible UNIFI APIs are v4, v5, unifiOS, UDMP-unifiOS</td></tr>
+									        <td class="help_table_gen_b">Possible UNIFI APIs are v4, v5, unifiOS, UDMP-unifiOS, default</td></tr>
 									    <tr><td class="help_table_gen_a">UNIFI_USER</td>
 									        <td class="help_table_gen_b">Nome utente</td></tr>
 									    <tr><td class="help_table_gen_a">UNIFI_PASS</td>
@@ -330,6 +330,9 @@ $help_lang['Cat_General_108_text'] = '<ol>
 										<li>Segui le istruzioni.</li>
 										<li>Dopo un aggiornamento riuscito, Pi.Alert dovrebbe riavviarsi automaticamente. In alternativa, puoi riavviarlo manualmente nella pagina delle impostazioni.</li>
 									</ol>';
+$help_lang['Cat_General_109_head'] = 'Cosa significa "(<span style="color:red;">*</span>)" accanto all&apos;ultima data di modifica?';
+$help_lang['Cat_General_109_text'] = 'Se il journal desidera scrivere un&apos;voce nel database mentre è attualmente in uso, viene creato un file di buffer, che verrà incorporato nel database la prossima volta che il journal vorrà scrivere nel database. In caso contrario, il file di buffer continua a essere utilizzato. Questo file è utilizzato solo per il journal.';
+
 $help_lang['Cat_Device_200_head'] = 'Ho dispositivi nella mia lista che sono sconosciuti o che non uso più. Dopo averli cancellati, ricompaiono sempre.';
 $help_lang['Cat_Device_200_text'] = 'Se stai utilizzando Pi-hole, tieni presente che Pi.Alert recupera informazioni da Pi-hole. Sospendi Pi.Alert, vai alla pagina Impostazioni di Pi-hole e cancella eventuali lease DHCP
 									relativi ai dispositivi che desideri rimuovere. Successivamente, controlla anche nella sezione Strumenti -> Rete di Pi-hole se trovi i dispositivi che riappaiono. Se li trovi, cancellali
@@ -382,12 +385,14 @@ $help_lang['Cat_Service_701_head'] = 'Quali sono i codici di stato HTTP? (ingles
 // da json
 $help_lang['Cat_Service_702_head'] = 'Quali modifiche vengono segnalate?';
 $help_lang['Cat_Service_702_text'] = 'Gli eventi rilevabili includono:<br>
-									<ul>
-										<li>Cambio del codice di stato HTTP</li>
-										<li>Cambio dell&apos;indirizzo IP</li>
-										<li>Tempo di risposta del server o mancanza di risposta</li>
-									</ul>
-									A seconda delle impostazioni di notifica, verranno segnalati tutti o solo la mancanza di risposta del server.';
+  									<ul>
+  										<li>Cambio nel codice di stato HTTP</li>
+  										<li>Cambio dell&apos;indirizzo IP</li>
+  										<li>Tempo di risposta del server o mancanza di risposta</li>
+  										<li>Modifiche al certificato SSL</li>
+  									</ul>
+  								 A seconda della scelta della notifica, verrà segnalato tutto o solo l&apos;assenza di una risposta dal server. Per le modifiche al certificato viene utilizzato un codice, che viene calcolato nel modo seguente.
+  								 In questo caso, ai singoli campi vengono assegnati i valori 8 = Subject, 4 = Issuer, 2 = Valid from e 1 = Valid to. Quindi, un codice di 13 significa che ci sono state modifiche nei campi Subject, Issuer e Valid to.';
 $help_lang['Cat_Service_703_head'] = 'Informazioni generali sul "Monitoraggio dei servizi web".';
 $help_lang['Cat_Service_703_text'] = 'Il monitoraggio si basa esclusivamente sulle risposte alle richieste HTTP inviate al server web di destinazione. A seconda dello stato del server, possono essere rilevati errori significativi. Se il server non risponde affatto, ciò viene considerato come "Non disponibile/Offline". Queste richieste ai server web vengono eseguite ogni 10 minuti come parte della scansione regolare.';
 $help_lang['Cat_ServiceDetails_750_head'] = 'Non posso modificare tutti i campi.';

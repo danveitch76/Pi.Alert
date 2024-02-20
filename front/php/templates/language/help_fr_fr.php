@@ -11,7 +11,7 @@ $help_lang['Cat_General_100_text_c'] = 'Cherche dans ce fichier l&apos;entrée "
 $help_lang['Cat_General_101_head'] = 'Mon réseau semble ralentir, le streaming "saccade".';
 $help_lang['Cat_General_101_text'] = 'Il est tout à fait possible que les appareils peu performants atteignent leurs limites de performance avec la manière dont Pi.Alert détecte les nouveaux appareils sur le réseau. Cela est encore plus vrai si ces appareils communiquent avec le réseau par WLAN. La solution serait alors de passer à une connexion câblée si possible ou, si l&apos;appareil ne doit être utilisé que pendant une période limitée, de mettre en pause le scan arp sur la page de maintenance.';
 $help_lang['Cat_General_102_head'] = 'Je reçois un message indiquant que la base de données est protégée en écriture (read only).';
-$help_lang['Cat_General_102_text'] = 'Des modifications sont peut-être en cours d&apos;écriture dans la base de données par le backend. Veuillez réessayer après une courte attente. Si le comportement ne change pas, suivez les instructions ci-dessous.<br><br>
+$help_lang['Cat_General_102_text'] = 'Il se peut que des modifications soient actuellement en cours dans la base de données via le backend. Veuillez réessayer après une courte attente. Si vous souhaitez apporter des modifications importantes à la liste des appareils, il est conseillé de mettre en pause Pi.Alert pendant la durée de l&apos;édition sur la page des paramètres. Si le comportement persiste, suivez les instructions ci-dessous.<br><br>
 									 Vérifie dans le répertoire Pi.Alert si le dossier de la base de données (db) s&apos;est vu attribuer les bons droits :<br>
       								 <span class="text-maroon help_faq_code">drwxrwxr-x  2 (nombre de usuario) www-data</span><br>
       								 Si l&apos;autorisation n&apos;est pas correcte, tu peux la rétablir avec les commandes suivantes dans le terminal ou la console :<br>
@@ -236,15 +236,16 @@ $help_lang['Cat_General_107_text'] = 'Le fichier <span class="text-maroon help_f
 									<table class="help_table_gen">
 									    <tr><td class="help_table_gen_section" colspan="2">Automatic Speedtest</td></tr>
 									    <tr><td class="help_table_gen_a">SPEEDTEST_TASK_ACTIVE</td>
-									        <td class="help_table_gen_b"></td></tr>
+									        <td class="help_table_gen_b">Activer/désactiver le test de vitesse automatique. Pour cela, il faut installer le Speedtest Ookla dans l&apos;onglet "Outils" de l&apos;appareil "Internet". Observe les instructions lors de l&apos;installation.</td></tr>
 									    <tr><td class="help_table_gen_a">SPEEDTEST_TASK_HOUR</td>
-									        <td class="help_table_gen_b"></td></tr>
+									        <td class="help_table_gen_b">Heure complète, ou heures séparées par une virgule, à laquelle le test de vitesse doit être lancé.</td></tr>
 									</table>
 									<table class="help_table_gen">
 									    <tr><td class="help_table_gen_section" colspan="2">Arp-scan Options & Samples</td></tr>
+									    <tr><td class="help_table_gen_a">MAC_IGNORE_LIST</td>
 									        <td class="help_table_gen_b">
 									            <span class="text-maroon help_faq_code">[&apos;MAC-Address 1&apos;, &apos;MAC-Address 2&apos;]</span><br>
-									            Cette (ces) adresse(s) MAC (à mémoriser avec des petites lettres) sera(ont) filtrée(s) à partir des résultats du scan.</td></tr>
+									            Cette (ces) adresse(s) MAC (à mémoriser avec des petites lettres) sera(ont) filtrée(s) à partir des résultats du scan. Il est également possible de spécifier uniquement le début d&apos;une adresse MAC. Toutes les adresses avec le même préfixe seront également filtrées.</td></tr>
 									    <tr><td class="help_table_gen_a">SCAN_SUBNETS</td>
 									        <td class="help_table_gen_b">
 									        	&lsquo;<span class="text-maroon help_faq_code">--localnet</span>&rsquo;<br>
@@ -302,7 +303,7 @@ $help_lang['Cat_General_107_text'] = 'Le fichier <span class="text-maroon help_f
 									    <tr><td class="help_table_gen_a">UNIFI_IP</td>
 									        <td class="help_table_gen_b">Adresse IP du système Unifi.</td></tr>
 									    <tr><td class="help_table_gen_a">UNIFI_API</td>
-									        <td class="help_table_gen_b">Possible UNIFI APIs are v4, v5, unifiOS, UDMP-unifiOS</td></tr>
+									        <td class="help_table_gen_b">Possible UNIFI APIs are v4, v5, unifiOS, UDMP-unifiOS, default</td></tr>
 									    <tr><td class="help_table_gen_a">UNIFI_USER</td>
 									        <td class="help_table_gen_b">Nom d&apos;utilisateur</td></tr>
 									    <tr><td class="help_table_gen_a">UNIFI_PASS</td>
@@ -325,6 +326,9 @@ $help_lang['Cat_General_108_text'] = '<ol>
 										<li>Suivez les instructions.</li>
 										<li>Après une mise à jour réussie, Pi.Alert devrait redémarrer automatiquement. Vous pouvez également le redémarrer manuellement sur la page des paramètres.</li>
 									</ol>';
+$help_lang['Cat_General_109_head'] = 'Que signifie "(<span style="color:red;">*</span>)" à côté de la date de dernière modification?';
+$help_lang['Cat_General_109_text'] = 'Si le journal souhaite écrire une entrée dans la base de données alors qu&apos;elle est actuellement en cours d&apos;utilisation, un fichier tampon est créé, qui sera incorporé à la base de données la prochaine fois que le journal voudra écrire dans la base de données. Sinon, le fichier tampon continue d&apos;être utilisé. Ce fichier est utilisé uniquement pour le journal.';
+
 $help_lang['Cat_Device_200_head'] = 'I have devices in my list that I do not know about. After deleting them, they always reappear.';
 $help_lang['Cat_Device_200_text'] = 'If you use Pi-hole, please note that Pi.Alert retrieves information from Pi-hole. Pause Pi.Alert, go to the settings page in Pi-hole and
  									delete the DHCP lease if necessary. Then, also in Pi-hole, look under Tools -> Network to see if you can find the recurring hosts there.
@@ -374,13 +378,15 @@ $help_lang['Cat_Service_700_text'] = 'There are 5 different color codes in total
 $help_lang['Cat_Service_701_head'] = 'What are the HTTP status codes?';
 // from json
 $help_lang['Cat_Service_702_head'] = 'What changes are reported?';
-$help_lang['Cat_Service_702_text'] = 'Detectable events are:<br>
-										<ul>
-											<li>Changing the HTTP status code</li>
-											<li>Change IP</li>
-											<li>Response time of the server or the missing of the response.</li>
-										</ul>
-									 Depending on the choice of notification, either everything is reported, or only the absence of a server response.';
+$help_lang['Cat_Service_702_text'] = 'Les événements détectables comprennent :<br>
+  									<ul>
+  										<li>Changement du code d&apos;état HTTP</li>
+  										<li>Changement d&apos;adresse IP</li>
+  										<li>Temps de réponse du serveur ou absence de réponse</li>
+  										<li>Modifications du certificat SSL</li>
+  									</ul>
+  								 Selon le choix de la notification, soit tout est signalé, soit seulement l&apos;absence d&apos;une réponse du serveur. Pour les modifications apportées au certificat, un code est utilisé, qui est calculé comme suit.
+  								 Dans ce cas, les valeurs 8 = Subject, 4 = Issuer, 2 = Valid from et 1 = Valid to sont attribuées aux champs individuels. Ainsi, un code de 13 signifie qu&apos;il y a eu des modifications dans les champs de Subject, Issuer et Valid to.';
 $help_lang['Cat_Service_703_head'] = 'General information about "Web Service Monitoring".';
 $help_lang['Cat_Service_703_text'] = 'The monitoring is based exclusively on the responses of HTTP requests sent to the page. Depending on the state of the server, meaningful error patterns can be detected here. If the server does not respond at all, this is considered as "Down/Offline". These web server requests are performed every 10 min as part of the normal scan.';
 $help_lang['Cat_ServiceDetails_750_head'] = 'I cannot edit all the fields.';

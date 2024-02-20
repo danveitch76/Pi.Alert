@@ -1,5 +1,6 @@
 <?php
 unset($pia_lang);
+
 //////////////////////////////////////////////////////////////////
 // About - Update by @TeroRERO 07ago2022
 //////////////////////////////////////////////////////////////////
@@ -22,6 +23,7 @@ $pia_lang['Gen_Save'] = 'Speichern';
 $pia_lang['Gen_Close'] = 'Schließen';
 $pia_lang['Gen_on'] = 'An';
 $pia_lang['Gen_off'] = 'Aus';
+$pia_lang['Gen_error'] = 'Fehler';
 
 //////////////////////////////////////////////////////////////////
 // Login Page
@@ -89,6 +91,7 @@ $pia_lang['Device_TableHead_LastIPOrder'] = 'Last IP Order';
 $pia_lang['Device_TableHead_Rowid'] = 'Zeilennummer';
 $pia_lang['Device_TableHead_Status'] = 'Status';
 $pia_lang['Device_TableHead_ConnectionType'] = 'Verbindungstyp';
+$pia_lang['Device_TableHead_WakeOnLAN'] = 'WoL';
 $pia_lang['Device_Searchbox'] = 'Suche';
 $pia_lang['Device_Tablelenght'] = 'Zeige _MENU_ Einträge';
 $pia_lang['Device_Tablelenght_all'] = 'Alle';
@@ -111,6 +114,13 @@ $pia_lang['Device_bulkDel_info_text'] = 'Mit dieser Funktion löschst du eines o
 $pia_lang['Device_bulkDel_back_before'] = 'Geräteanzahl vorher';
 $pia_lang['Device_bulkDel_back_after'] = 'Geräteanzahl aktuell';
 $pia_lang['Device_bulkDel_back_hosts'] = 'Zu löschende MAC-Adressen';
+$pia_lang['Device_predef_table_filter'] = 'Vordefinierten Filter erstellen';
+$pia_lang['Device_del_table_filter_noti'] = 'Tabellenfilter löschen';
+$pia_lang['Device_del_table_filter_noti_text'] = 'Möchtest du den gespeicherten Tabellenfilter löschen? Hierbei wird nur der Eintrag in der Seitenleiste entfern. Die gefilterten Geräte bleiben unbeeinflusst.';
+$pia_lang['Device_del_table_filtername'] = 'Filterbezeichnung';
+$pia_lang['Device_del_table_filterstring'] = 'Filter';
+$pia_lang['Device_del_table_filtername_help'] = 'Bezeichnung in der Seitenleiste';
+$pia_lang['Device_del_table_filterstring_help'] = 'Suchbegriff';
 
 //////////////////////////////////////////////////////////////////
 // Presence Page
@@ -254,13 +264,16 @@ $pia_lang['DevDetail_Tools_nmap_buttonFast'] = 'Schneller Scan';
 $pia_lang['DevDetail_Tools_nmap_buttonDefault'] = 'Standard Scan';
 $pia_lang['DevDetail_Tools_nmap_buttonDetail'] = 'Detailierter Scan';
 $pia_lang['DevDetail_Tools_nmap_buttonFast_text'] = 'Schneller Scan: Überprüft nur die wichtigsten 100 Ports (wenige Sekunden)';
-$pia_lang['DevDetail_Tools_nmap_buttonDefault_text'] = 'Standard Scan: Nmap scannt die ersten 1.000 Ports für jedes angeforderte Scan-Protokoll. Damit werden etwa 93% der TCP-Ports und 49% der UDP-Ports erfasst. (ca. 5-10 Sekunden)';
-$pia_lang['DevDetail_Tools_nmap_buttonDetail_text'] = 'Detailierter Scan: Standardscan mit aktivierter Betriebssystemerkennung, Versionserkennung, Skript-Scan und Traceroute (bis zu 30 oder mehr Sekunden)';
+$pia_lang['DevDetail_Tools_nmap_buttonDefault_text'] = 'Standard Scan: Nmap scannt die ersten 1.000 Ports für jedes angeforderte Scan-Protokoll. (ca. 5-10 Sekunden)';
+$pia_lang['DevDetail_Tools_nmap_buttonDetail_text'] = 'Detailierter Scan: Der Scan wurde um einige UDP Ports erweitert. Ebenfalls wurde die Range der TCP Ports vergrößert.';
 $pia_lang['DevDetail_Tools_WOL'] = 'Sende Wol Befehl an ';
 $pia_lang['DevDetail_Tools_WOL_noti'] = 'Wake-on-LAN';
 $pia_lang['DevDetail_Tools_WOL_noti_text'] = 'Das Wake-on-LAN Kommando wird an die Broadcast Adresse gesendet. Wenn das Ziel nicht in dem Subnet/vlan von Pi.Alert ist, wird das Ziel-Gerät nicht reagieren.';
 $pia_lang['BackDevDetail_Tools_WOL_okay'] = 'Das Kommando wurde ausgeführt';
 $pia_lang['BackDevDetail_Tools_WOL_error'] = 'Das Kommando wurde nicht ausgeführt';
+$pia_lang['DevDetail_Speedtest_note_a'] = 'Der automatische Speedtest startet ';
+$pia_lang['DevDetail_Speedtest_note_b'] = ' und ';
+$pia_lang['DevDetail_Speedtest_note_c'] = ' Uhr';
 
 //////////////////////////////////////////////////////////////////
 // WebServices Details Page
@@ -355,7 +368,7 @@ $pia_lang['Maintenance_notification_config'] = 'Benachrichtigung (Geräte, ICMP)
 $pia_lang['Maintenance_notification_config_webmon'] = 'Benachrichtigung (Services)';
 $pia_lang['Maintenance_Tools_Logviewer_Scan'] = 'Scan';
 $pia_lang['Maintenance_Tools_Logviewer_Scan_empty'] = 'Es wird vermutlich gerade Scan ausgeführt';
-$pia_lang['Maintenance_Tools_Logviewer_IPLog'] = 'Internet IP';
+$pia_lang['Maintenance_Tools_Logviewer_IPLog'] = 'Internet / Speedtest / Update Check';
 $pia_lang['Maintenance_Tools_Logviewer_IPLog_empty'] = 'Kein Log verfügbar';
 $pia_lang['Maintenance_Tools_Logviewer_Vendor'] = 'Vendor Update';
 $pia_lang['Maintenance_Tools_Logviewer_Vendor_empty'] = 'Kein Log verfügbar';
@@ -388,7 +401,7 @@ $pia_lang['Maintenance_Tools_Tab_Subheadline_b'] = 'Geräteübersicht konfigurie
 $pia_lang['Maintenance_Tools_Tab_Subheadline_c'] = 'Sicherheit';
 $pia_lang['Maintenance_Tools_Tab_Subheadline_d'] = 'Scans';
 $pia_lang['Maintenance_Tools_Tab_Subheadline_e'] = 'FavIcon';
-$pia_lang['Maintenance_Tools_Tab_Subheadline_e_Intro'] = 'Du kannst in dem Feld eine eigene URL zu deinem gewünschten FavIcon eintragen, oder zwischen lokalen oder remote (https://github.com/leiweibau/Pi.Alert) FavIcons wählen. Je Konfiguration kann es sein, dass lokale FavIcons nicht als HomeScreen Icon funktionieren.';
+$pia_lang['Maintenance_Tools_Tab_Subheadline_e_Intro'] = 'Du kannst in dem Feld eine eigene URL zu deinem gewünschten FavIcon eintragen, oder zwischen lokalen oder remote (https://github.com/leiweibau/Pi.Alert) FavIcons wählen. Je nach Konfiguration kann es sein, dass lokale FavIcons nicht als HomeScreen Icon funktionieren.';
 $pia_lang['Maintenance_Tool_darkmode'] = 'Dunkel Modus';
 $pia_lang['Maintenance_Tool_darkmode_noti'] = 'Darstellungswechsel';
 $pia_lang['Maintenance_Tool_darkmode_noti_text'] = 'Wechselt zwischen der hellen und der dunklen Darstellung. Wenn die Umschaltung nicht ordentlich funktionieren sollte, versuchen Sie den Browsercache zu löschen.';
@@ -441,7 +454,7 @@ $pia_lang['Maintenance_Tool_backup_text'] = 'Die Datenbank-Sicher&shy;ungen befi
 $pia_lang['Maintenance_Tool_backup_noti'] = 'DB Sicherung';
 $pia_lang['Maintenance_Tool_backup_noti_text'] = 'Sind Sie sicher, dass Sie die Datenbank jetzt sichern möchten. Prüfen Sie, dass gerade keine Scans stattfinden.';
 $pia_lang['Maintenance_Tool_backupcsv'] = 'Geräte/Services in<br>CSV Datei sichern';
-$pia_lang['Maintenance_Tool_backupcsv_text'] = 'Geräte, Web Servives und Geräte aus dem ICMP Monitoring werden in CSV-Dateien exportiert und als zip-Archive gespeichert. Dies dient als Notfalllösung, falls wegen einer defekten Datenbank, alles wieder eingegeben werden muss. Ein Import ist im Moment noch nicht möglich.';
+$pia_lang['Maintenance_Tool_backupcsv_text'] = 'Geräte, Web Services und Geräte aus dem ICMP Monitoring werden in CSV-Dateien ex&shy;por&shy;tiert und als zip-Archive gespeichert. Dies dient als Notfalllösung, falls wegen einer defekten Datenbank, alles wieder eingegeben werden muss. Ein Import ist im Moment noch nicht möglich.';
 $pia_lang['Maintenance_Tool_backupcsv_noti'] = 'Geräte/Services in CSV Datei sichern';
 $pia_lang['Maintenance_Tool_backupcsv_noti_text'] = 'Sind Sie sicher, dass Sie jetzt die Geräte und Web Services Listen als CSV-Dateien exportieren möchten?.';
 $pia_lang['Maintenance_Tool_restore'] = 'DB Wiederherstellung';
@@ -460,6 +473,8 @@ $pia_lang['Maintenance_Tool_del_ActHistory'] = 'Löschen der Netzwerkaktivität'
 $pia_lang['Maintenance_Tool_del_ActHistory_text'] = 'Der Graph für die Netz&shy;werkaktivität wird zu&shy;rück&shy;gesetzt. Die Events wer&shy;den hiervon nicht beeinflusst.';
 $pia_lang['Maintenance_Tool_del_ActHistory_noti'] = 'Netzwerkaktivität löschen';
 $pia_lang['Maintenance_Tool_del_ActHistory_noti_text'] = 'Sind Sie sicher, dass Sie die Netzwerkaktivität zurücksetzen möchten?';
+$pia_lang['Maintenance_Tool_del_speedtest'] = 'Speedtest Resultate löschen';
+$pia_lang['Maintenance_Tool_del_speedtest_text'] = 'Alle gespeicherten Speedtest Ergebnisse werden gelöscht. Bereits Konfigurierte automatische Speedtests werden weiterhin ausgeführt.';
 $pia_lang['Maintenance_Tool_loginenable'] = 'Login aktivieren';
 $pia_lang['Maintenance_Tool_loginenable_text'] = 'Nach der Aktivierung gelangst du automatisch auf die Anmeldeseite. Wenn du zuvor noch kein Passwort gesetzt hast, ist "123456" das Standardpasswort.';
 $pia_lang['Maintenance_Tool_loginenable_noti'] = 'Login aktivieren';
@@ -479,7 +494,7 @@ $pia_lang['Maintenance_ConfEditor_Restore_info'] = 'Diese Funktion stellt die Ko
 $pia_lang['Maintenance_ConfEditor_Save_info'] = 'Der Inhalt des Textfeldes mit eventuellen Änderungen wird in die Datei "pialert.conf" ge&shy;spei&shy;chert. Die vorherige Kon&shy;figu&shy;ration wird als "pialert-prev.bak" gesichert. Mit jeder Speicherung wird die Datei "pialert-prev.bak" wieder mit der vorherigen Version der Kon&shy;figu&shy;rationsdatei überschrieben.';
 $pia_lang['Maintenance_Tool_ConfBackup'] = 'Config-Backup anlegen';
 $pia_lang['Maintenance_Tool_ConfBackup_text'] = 'Neben der Datei "pialert-prev.bak" wird eine weitere Sicherung mit dem aktuellen Da&shy;tum inkl. Uhrzeit an&shy;ge&shy;legt. Diese Sicherung muss im Bedarfsfall ma&shy;nuell wieder&shy;hergestellt werden (umbenennen in "pialert.conf").';
-$pia_lang['FavIcon_color_white'] = 'weis';
+$pia_lang['FavIcon_color_white'] = 'weiß';
 $pia_lang['FavIcon_color_black'] = 'schwarz';
 $pia_lang['FavIcon_color_red'] = 'rot';
 $pia_lang['FavIcon_color_blue'] = 'blau';
@@ -491,7 +506,7 @@ $pia_lang['FavIcon_logo_black'] = 'dunkles Logo';
 $pia_lang['FavIcon_mode_glass'] = 'glanz';
 $pia_lang['FavIcon_mode_flat'] = 'matt';
 $pia_lang['FavIcon_local'] = 'lokal';
-$pia_lang['FavIcon_remote'] = 'remote';
+$pia_lang['FavIcon_remote'] = 'GitHub';
 
 //////////////////////////////////////////////////////////////////
 // Maintenance Page (Backend)
@@ -533,6 +548,8 @@ $pia_lang['BackDevices_DBTools_DelActHistory'] = 'Die Anzeige der Netzwerkaktivi
 $pia_lang['BackDevices_DBTools_DelActHistoryError'] = 'Fehler beim Zurücksetzen der Netzwerkaktivitätsanzeige.';
 $pia_lang['BackDevices_DBTools_DelInactHosts'] = 'Inaktive Hosts wurden gelöscht.';
 $pia_lang['BackDevices_DBTools_DelInactHostsError'] = 'Es trat, bei dem Versuch inaktive Hosts zu löschen, ein Fehler auf.';
+$pia_lang['BackDevices_DBTools_DelSpeedtest'] = 'Die Speedtest-Ergebnisse wurden gelöscht.';
+$pia_lang['BackDevices_DBTools_DelSpeedtestError'] = 'Fehler beim löschen der Speedtest-Ergebnisse.';
 $pia_lang['BackDevices_Login_disabled'] = 'Login deaktiviert.';
 $pia_lang['BackDevices_Login_enabled'] = 'Login aktiviert.';
 $pia_lang['BackDevices_Theme_set'] = 'Theme wird angewendet.';
@@ -550,6 +567,15 @@ $pia_lang['BackDevices_Report_Delete'] = ' Benachrichtigung(en) wurde(n) gelösc
 $pia_lang['BackFiles_FavIcon_invalidURL'] = 'Eine ungültige URL wurde eingegeben';
 $pia_lang['BackFiles_FavIcon_ErrorURL'] = 'Ein manuell eingegebens FavIcon muss eine URL sein. Pfadangaben für eine lokale Datei werden nicht gespeichert';
 $pia_lang['BackFiles_FavIcon_okay'] = 'Das neue FavIcon wurde gespeichert';
+$pia_lang['BackDevices_table_filter_ok_a'] = 'Der Filter ';
+$pia_lang['BackDevices_table_filter_ok_b'] = ' mit dem Wert ';
+$pia_lang['BackDevices_table_filter_ok_c'] = ' wurde gespeichert';
+$pia_lang['BackDevices_table_delfilter_ok'] = 'Dieser Filter wurde gelöscht: ';
+$pia_lang['BackDevices_table_filter_error_a'] = 'Der Filter ';
+$pia_lang['BackDevices_table_filter_error_b'] = ' mit dem Wert ';
+$pia_lang['BackDevices_table_filter_error_c'] = ' konnte nicht gespeichert werden';
+$pia_lang['BackDevices_table_filter_error_d'] = 'Nicht alle erforderlichen Felder wurden ausgefüllt';
+$pia_lang['BackDevices_table_filter_error_e'] = 'Fehler beim Erstellen der Filter-Tabelle';
 
 //////////////////////////////////////////////////////////////////
 // Network Page
@@ -619,6 +645,7 @@ $pia_lang['Updatecheck_new'] = 'Neueste Pi.Alert Version auf Github';
 $pia_lang['GeoLiteDB_Title'] = 'GeoLite2 DB Prüfung';
 $pia_lang['GeoLiteDB_cur'] = 'GeoLite2 DB geladen am';
 $pia_lang['GeoLiteDB_new'] = 'Neueste GeoLite2 DB auf Github';
+$pia_lang['Auto_Updatecheck_RN'] = 'Automatische Update Suche';
 $pia_lang['Updatecheck_RN'] = 'Pi.Alert Update Hinweise';
 $pia_lang['Updatecheck_RN2'] = 'Pi.Alert Update Prüfung';
 $pia_lang['Updatecheck_U2D'] = 'Du nutzt bereits die aktuellest Version';
@@ -649,6 +676,8 @@ $pia_lang['ookla_devdetails_table_server'] = 'Server';
 $pia_lang['ookla_devdetails_table_ping'] = 'Ping';
 $pia_lang['ookla_devdetails_table_down'] = 'Download';
 $pia_lang['ookla_devdetails_table_up'] = 'Upload';
+
+$pia_lang['nmap_no_scan_results'] = 'Keine offenen Ports entdeckt';
 
 // =============================================================================================================
 
@@ -682,6 +711,7 @@ $pia_journ_lang['b_032'] = $pia_journ_lang['a_032'];
 // cronjob
 $pia_journ_lang['c_002'] = $pia_journ_lang['a_002'];
 $pia_journ_lang['c_010'] = $pia_journ_lang['a_010'];
+$pia_journ_lang['c_060'] = $pia_journ_lang['a_060'];
 //LogStrings
 $pia_journ_lang['LogStr_0001'] = 'Eintrag hinzugefügt';
 $pia_journ_lang['LogStr_0002'] = 'Eintrag bearbeitet';
@@ -710,6 +740,8 @@ $pia_journ_lang['LogStr_0024'] = 'Alle Events löschen';
 $pia_journ_lang['LogStr_0025'] = 'Alle Events löschen (mit Fehler)';
 $pia_journ_lang['LogStr_0026'] = 'Netzwerkaktivität zurücksetzen';
 $pia_journ_lang['LogStr_0027'] = 'Netzwerkaktivität zurücksetzen (mit Fehler)';
+$pia_journ_lang['LogStr_0028'] = 'Speedtest Resultate löschen';
+$pia_journ_lang['LogStr_0029'] = 'Speedtest Resultate löschen (mit Fehler)';
 $pia_journ_lang['LogStr_0030'] = 'Aktive Netzwerkkomponente hinzugefügt (Switch, Router, etc)';
 $pia_journ_lang['LogStr_0031'] = 'Aktive Netzwerkkomponente bearbeitet (Switch, Router, etc)';
 $pia_journ_lang['LogStr_0032'] = 'Aktive Netzwerkkomponente gelöscht (Switch, Router, etc)';
@@ -717,6 +749,11 @@ $pia_journ_lang['LogStr_0033'] = 'Nicht scanbares Gerät hinzugefügt (Hubs, PoE
 $pia_journ_lang['LogStr_0034'] = 'Nicht scanbares Gerät bearbeitet (Hubs, PoE Geräte, Docker, etc.)';
 $pia_journ_lang['LogStr_0035'] = 'Nicht scanbares Gerät gelöscht (Hubs, PoE Geräte, Docker, etc.)';
 $pia_journ_lang['LogStr_0036'] = 'Geräte, Web Services und ICMP Hosts im CSV-Format exportiert.';
+$pia_journ_lang['LogStr_0041'] = 'Fehler beim Speichern des vordefinierten Filters';
+$pia_journ_lang['LogStr_0042'] = 'Vordefinierter Filter wurde gespeichert';
+$pia_journ_lang['LogStr_0043'] = 'Vordefinierter Filter war unvollständig und wurde nicht gespeichert';
+$pia_journ_lang['LogStr_0044'] = 'Die Tabelle für die Filter konnte nicht erstellt werden';
+$pia_journ_lang['LogStr_0045'] = 'Vordefinierter Filter wurde gelöscht';
 $pia_journ_lang['LogStr_0050'] = 'Passwortschutz von Pi.Alert aktiviert';
 $pia_journ_lang['LogStr_0051'] = 'Passwortschutz von Pi.Alert deaktiviert';
 $pia_journ_lang['LogStr_0052'] = 'Spaltenkonfiguration der Geräte-Liste geändert';
@@ -732,6 +769,8 @@ $pia_journ_lang['LogStr_0062'] = 'Kein Pi.Alert Update verfügbar';
 $pia_journ_lang['LogStr_0063'] = 'GeoLite2 DB Update verfügbar';
 $pia_journ_lang['LogStr_0064'] = 'Kein GeoLite2 DB Update verfügbar';
 $pia_journ_lang['LogStr_0065'] = 'GeoLite2 DB nicht installiert';
+$pia_journ_lang['LogStr_0066'] = 'Fehler: Ungültige Updateinformationen';
+$pia_journ_lang['LogStr_0067'] = 'Es wurde keine neuere Version gefunden';
 $pia_journ_lang['LogStr_0101'] = 'Datenbank aufgeräumt und optimiert';
 $pia_journ_lang['LogStr_0210'] = 'Individuellen nmap Scan durchgeführt';
 $pia_journ_lang['LogStr_0251'] = 'Wake-on-lan ausgeführt';

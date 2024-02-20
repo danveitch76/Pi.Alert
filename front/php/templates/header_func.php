@@ -22,11 +22,12 @@ function delete_single_webgui_report() {
 function arpscanstatus() {
 	global $pia_lang;
 	if (!file_exists('../db/setting_stoppialert')) {
-		$execstring = 'ps aux | grep "~/pialert/back/pialert.py 1" 2>&1';
+		$execstring = 'ps -aux | grep "/pialert/back/pialert.py 1" | grep -v grep | sed \'/>~\/pialert\/log\/pialert.1.log/d\'';
 		$pia_arpscans = "";
 		exec($execstring, $pia_arpscans);
+		$arp_proc_count = sizeof($pia_arpscans);
 		unset($_SESSION['arpscan_timerstart']);
-		$_SESSION['arpscan_result'] = sizeof($pia_arpscans) - 2 . ' ' . $pia_lang['Maintenance_arp_status_on'] . ' <div id="nextscancountdown" style="display: inline-block;"></div>';
+		$_SESSION['arpscan_result'] = '<span id="arpproccounter">' . $arp_proc_count . '</span> ' . $pia_lang['Maintenance_arp_status_on'] . ' <div id="nextscancountdown" style="display: inline-block;"></div>';
 		$_SESSION['arpscan_sidebarstate'] = 'Active';
 		$_SESSION['arpscan_sidebarstate_light'] = 'green-light fa-gradient-green';
 	} else {
@@ -143,14 +144,6 @@ function toggle_webservices_menu($section) {
                 </a>
               </li>';
 	}
-
-	// if (($_SESSION['Scan_WebServices'] == True) && ($section == "Event")) {
-	// 	echo '<li class="';
-	// 	if (in_array(basename($_SERVER['SCRIPT_NAME']), array('servicesEvents.php'))) {echo 'active';}
-	// 	echo '">
-	//           <a href="servicesEvents.php"><i class="fa fa-globe"></i><span>' . $pia_lang['Navigation_Events_Serv'] . '</span></a>
-	//         </li>';
-	// }
 }
 // ICPMScan Menu Items
 function toggle_icmpscan_menu($section) {
@@ -181,6 +174,7 @@ function get_config_parmeter($config_param) {
 if (get_config_parmeter('ICMPSCAN_ACTIVE') == 1) {$_SESSION['ICMPScan'] = True;} else { $_SESSION['ICMPScan'] = False;}
 if (get_config_parmeter('SCAN_WEBSERVICES') == 1) {$_SESSION['Scan_WebServices'] = True;} else { $_SESSION['Scan_WebServices'] = False;}
 if (get_config_parmeter('ARPSCAN_ACTIVE') == 1) {$_SESSION['Scan_MainScan'] = True;} else { $_SESSION['Scan_MainScan'] = False;}
+if (get_config_parmeter('AUTO_UPDATE_CHECK') == 1) {$_SESSION['Auto_Update_Check'] = True;} else { $_SESSION['Auto_Update_Check'] = False;}
 
 // State for Toggle Buttons
 function convert_state($state, $revert) {
@@ -211,21 +205,64 @@ function insert_back_button() {
 	}
 }
 // Adjust Logo Color
-function set_iconcolor_for_skin($skinname) {
-	if ($skinname == 'skin-black-light' || $skinname == 'skin-black') {
-		return 'pialertLogoBlack';
-	} else {return 'pialertLogoWhite';}
-
+function set_userimage($skinname) {
+	if ($skinname == 'skin-black-light' || $skinname == 'skin-black'|| $skinname == 'leiweibau_light') {
+		$_SESSION['UserLogo'] = 'pialertLogoBlack';
+	} else {$_SESSION['UserLogo'] = 'pialertLogoWhite';}
 }
-// Darkmode
-if (file_exists('../db/setting_darkmode')) {$ENABLED_DARKMODE = True;} else { $ENABLED_DARKMODE = False;}
+
+// Get DeviceList Filters
+function get_devices_filter_list() {
+	$database = '../db/pialert.db';
+	$db = new SQLite3($database);
+	$sql_select = 'SELECT * FROM Devices_table_filter ORDER BY filtername ASC';
+	$result = $db->query($sql_select);
+	if ($result) {
+		if ($result->numColumns() > 0) {
+	        while ($row = $result->fetchArray(SQLITE3_ASSOC)) {
+	        	if ($row['filterstring'] == $_REQUEST['predefined_filter']) {$filterlist_icon = "fa-solid fa-circle";} else {$filterlist_icon = "fa-regular fa-circle";}
+	            echo '<li><a href="devices.php?predefined_filter='.urlencode($row['filterstring']).'" style="font-size: 14px; height: 30px; line-height:30px;padding:0;padding-left:25px;"><i class="'.$filterlist_icon.'" style="margin-right:5px;"></i>'. $row['filtername'] .'</a></li>';
+	        }
+		}
+	} else {echo "";}
+	$db->close();
+}
+
 // Arp Histroy Graph
 if (file_exists('../db/setting_noonlinehistorygraph')) {$ENABLED_HISTOY_GRAPH = False;} else { $ENABLED_HISTOY_GRAPH = True;}
-// Theme
-foreach (glob("../db/setting_skin*") as $filename) {
-	$pia_skin_selected = str_replace('setting_', '', basename($filename));
+
+// Prüfe ob es ein Theme gibt, wenn ja, Darkmode soll über css ausgeblendet werden
+$themefile = '../db/setting_theme*';
+$theme_result = glob($themefile);
+// Check if any matching files were found
+if (!empty($theme_result)) {
+	foreach ($theme_result as $file) {
+		$themename_file = str_replace('setting_theme_', '', basename($file));
+		$ENABLED_THEMEMODE = True;
+		$ENABLED_DARKMODE = False;
+		$skin_selected_head = '<link rel="stylesheet" href="lib/AdminLTE/dist/css/skins/skin-blue.min.css">';
+		$skin_selected_body = '<body class="hold-transition skin-blue sidebar-mini" >';
+		$theme_selected_head = '<link rel="stylesheet" href="css/themes/' . $themename_file . '/' . $themename_file . '.css">';
+		set_userimage($themename_file);
+	}
+} else {
+	// Darkmode
+	if (file_exists('../db/setting_darkmode')) {$ENABLED_DARKMODE = True;} else { $ENABLED_DARKMODE = False;}
+	// Use saved AdminLTE Skin
+	foreach (glob("../db/setting_skin*") as $filename) {
+		$skinname_file = str_replace('setting_', '', basename($filename));
+		$skin_selected_head = '<link rel="stylesheet" href="lib/AdminLTE/dist/css/skins/' . $skinname_file . '.min.css">';
+		$skin_selected_body = '<body class="hold-transition ' . $skinname_file . ' sidebar-mini" >';
+		set_userimage($skinname_file);
+	}
+	// Use fallback AdminLTE Skin
+	if (strlen($skin_selected_head) == 0) {
+		$skin_selected_head = '<link rel="stylesheet" href="lib/AdminLTE/dist/css/skins/skin-blue.min.css">';
+		$skin_selected_body = '<body class="hold-transition skin-blue sidebar-mini" >';
+		set_userimage("skin-blue");
+	}
 }
-if (strlen($pia_skin_selected) == 0) {$pia_skin_selected = 'skin-blue';}
+
 // Language
 foreach (glob("../db/setting_language*") as $filename) {
 	$pia_lang_selected = str_replace('setting_language_', '', basename($filename));

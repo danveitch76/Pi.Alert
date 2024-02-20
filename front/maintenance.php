@@ -140,6 +140,12 @@ function read_arpscan_timer() {
 	echo $timer_output;
 }
 
+// Buffer active --------------------------------------------------------------
+	$file = '../db/pialert_journal_buffer';
+	if (file_exists($file)) {
+		$buffer_indicator = '(<span style="color:red;">*</span>)';
+	} else {$buffer_indicator = '';}
+
 // Get Device List Columns ----------------------------------------------------
 function read_DevListCol() {
 	$file = '../db/setting_devicelist';
@@ -147,7 +153,7 @@ function read_DevListCol() {
 		$get = file_get_contents($file, true);
 		$output_array = json_decode($get, true);
 	} else {
-		$output_array = array('ConnectionType' => 0, 'Favorites' => 1, 'Group' => 1, 'Owner' => 1, 'Type' => 1, 'FirstSession' => 1, 'LastSession' => 1, 'LastIP' => 1, 'MACType' => 1, 'MACAddress' => 0, 'Location' => 0);
+		$output_array = array('ConnectionType' => 0, 'Favorites' => 1, 'Group' => 1, 'Owner' => 1, 'Type' => 1, 'FirstSession' => 1, 'LastSession' => 1, 'LastIP' => 1, 'MACType' => 1, 'MACAddress' => 0, 'Location' => 0, 'WakeOnLAN' => 0);
 	}
 	return $output_array;
 }
@@ -165,40 +171,8 @@ function set_column_checkboxes($table_config) {
 	if ($table_config['MACType'] == 1) {$col_checkbox['MACType'] = "checked";}
 	if ($table_config['MACAddress'] == 1) {$col_checkbox['MACAddress'] = "checked";}
 	if ($table_config['Location'] == 1) {$col_checkbox['Location'] = "checked";}
+	if ($table_config['WakeOnLAN'] == 1) {$col_checkbox['WakeOnLAN'] = "checked";}
 	return $col_checkbox;
-}
-
-// Read logfiles --------------------------------------------------------------
-function read_logfile($logfile, $logmessage) {
-	$file = file_get_contents('./php/server/' . $logfile, true);
-	if ($file == "") {echo $logmessage;}
-	if ($logfile == "pialert.webservices.log") {
-		$file = str_replace("Start Services Monitoring\n\n", "Start Services Monitoring\n\n<pre style=\"border: solid 1px #666; background-color: transparent;\">", $file);
-		$file = str_replace("\nServices Monitoring Changes:", "\n</pre>Services Monitoring Changes:", $file);
-	}
-	echo str_replace("\n", '<br>', str_replace("    ", '&nbsp;&nbsp;&nbsp;&nbsp;', str_replace("        ", '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;', $file)));
-}
-
-// Read Vendor logfiles -------------------------------------------------------
-function read_logfile_vendor() {
-	global $pia_lang;
-
-	$file = file_get_contents('./php/server/pialert.vendors.log');
-	if ($file == "") {echo $pia_lang['Maintenance_Tools_Logviewer_Vendor_empty'];} else {
-		$temp_log = explode("\n", $file);
-		$x = 0;
-		while ($x < sizeof($temp_log)) {
-			if (strlen($temp_log[$x]) == 0) {
-				$y = $x;
-				while ($y < sizeof($temp_log)) {
-					echo $temp_log[$y] . '<br>';
-					$y++;
-				}
-				break;
-			}
-			$x++;
-		}
-	}
 }
 
 // Top Modal Block ------------------------------------------------------------
@@ -212,7 +186,7 @@ function print_logviewer_modal_head($id, $title) {
                     <h4 class="modal-title">Viewer: ' . $title . '</h4>
                 </div>
                 <div class="modal-body main_logviwer_text_layout">
-                    <div class="main_logviwer_log" style="max-height: 70vh;">';
+                    <div class="main_logviwer_log" style="max-height: 70vh;" id="modal_'.$id.'_content">';
 }
 
 // Bottom Modal Block ---------------------------------------------------------
@@ -280,7 +254,7 @@ if ($_REQUEST['tab'] == '1') {
                 <div class="db_info_table_row">
                     <div class="db_info_table_cell"><?=$pia_lang['Maintenance_database_lastmod'];?></div>
                     <div class="db_info_table_cell">
-                        <?=$DB_MOD_DATA;?>
+                        <?=$DB_MOD_DATA.' '.$buffer_indicator;?>
                     </div>
                 </div>
                 <div class="db_info_table_row">
@@ -357,29 +331,24 @@ if ($_SESSION['Scan_WebServices'] == True) {
 // Log Viewer - Modals
 // Scan
 print_logviewer_modal_head('scan', 'pialert.1.log (File)');
-read_logfile('pialert.1.log', $pia_lang['Maintenance_Tools_Logviewer_Scan_empty']);
 print_logviewer_modal_foot();
-// Internet IP
+// // Internet IP
 print_logviewer_modal_head('iplog', 'pialert.IP.log (File)');
-read_logfile('pialert.IP.log', $pia_lang['Maintenance_Tools_Logviewer_IPLog_empty']);
 print_logviewer_modal_foot();
-// Vendor Update
+// // Vendor Update
 print_logviewer_modal_head('vendor', 'pialert.vendors.log (File)');
-read_logfile_vendor();
 print_logviewer_modal_foot();
-// Cleanup
+// // Cleanup
 print_logviewer_modal_head('cleanup', 'pialert.cleanup.log (File)');
-read_logfile('pialert.cleanup.log', $pia_lang['Maintenance_Tools_Logviewer_Cleanup_empty']);
 print_logviewer_modal_foot();
-// Nmap
+// // Nmap
 print_logviewer_modal_head('nmap', 'last Nmap Scan (Memory)');
 if (!isset($_SESSION['ScanShortMem_NMAP'])) {echo $pia_lang['Maintenance_Tools_Logviewer_Nmap_empty'];} else {echo $_SESSION['ScanShortMem_NMAP'];}
 print_logviewer_modal_foot();
-// WebServices
+// // WebServices
 if ($_SESSION['Scan_WebServices'] == True) {
-	print_logviewer_modal_head('webservices', 'pialert.webservices.log (File)');
-	read_logfile('pialert.webservices.log', $pia_lang['Maintenance_Tools_Logviewer_WebServices_empty']);
-	print_logviewer_modal_foot();
+ 	print_logviewer_modal_head('webservices', 'pialert.webservices.log (File)');
+ 	print_logviewer_modal_foot();
 }
 ?>
 
@@ -517,18 +486,21 @@ if (strtolower($_SESSION['WebProtection']) != 'true') {
                                           <button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown" aria-expanded="false" id="dropdownButtonSkinSelection">
                                             <span class="fa fa-caret-down"></span></button>
                                           <ul id="dropdownSkinSelection" class="dropdown-menu dropdown-menu-right">
-                                            <li><a href="javascript:void(0)" onclick="setTextValue('txtSkinSelection','skin-black-light');">Black-light</a></li>
-                                            <li><a href="javascript:void(0)" onclick="setTextValue('txtSkinSelection','skin-black');">Black</a></li>
-                                            <li><a href="javascript:void(0)" onclick="setTextValue('txtSkinSelection','skin-blue-light');">Blue-light</a></li>
-                                            <li><a href="javascript:void(0)" onclick="setTextValue('txtSkinSelection','skin-blue');">Blue</a></li>
-                                            <li><a href="javascript:void(0)" onclick="setTextValue('txtSkinSelection','skin-green-light');">Green-light</a></li>
-                                            <li><a href="javascript:void(0)" onclick="setTextValue('txtSkinSelection','skin-green');">Green</a></li>
-                                            <li><a href="javascript:void(0)" onclick="setTextValue('txtSkinSelection','skin-purple-light');">Purple-light</a></li>
-                                            <li><a href="javascript:void(0)" onclick="setTextValue('txtSkinSelection','skin-purple');">Purple</a></li>
-                                            <li><a href="javascript:void(0)" onclick="setTextValue('txtSkinSelection','skin-red-light');">Red-light</a></li>
-                                            <li><a href="javascript:void(0)" onclick="setTextValue('txtSkinSelection','skin-red');">Red</a></li>
-                                            <li><a href="javascript:void(0)" onclick="setTextValue('txtSkinSelection','skin-yellow-light');">Yellow-light</a></li>
-                                            <li><a href="javascript:void(0)" onclick="setTextValue('txtSkinSelection','skin-yellow');">Yellow</a></li>
+                                            <li><a href="javascript:void(0)" onclick="setTextValue('txtSkinSelection','leiweibau_dark');">Theme leiweibau-dark</a></li>
+                                            <li><a href="javascript:void(0)" onclick="setTextValue('txtSkinSelection','leiweibau_light');">Theme leiweibau-light</a></li>
+                                            <li class="divider"></li>
+                                            <li><a href="javascript:void(0)" onclick="setTextValue('txtSkinSelection','skin-black-light');">Skin Black-light</a></li>
+                                            <li><a href="javascript:void(0)" onclick="setTextValue('txtSkinSelection','skin-black');">Skin Black</a></li>
+                                            <li><a href="javascript:void(0)" onclick="setTextValue('txtSkinSelection','skin-blue-light');">Skin Blue-light</a></li>
+                                            <li><a href="javascript:void(0)" onclick="setTextValue('txtSkinSelection','skin-blue');">Skin Blue</a></li>
+                                            <li><a href="javascript:void(0)" onclick="setTextValue('txtSkinSelection','skin-green-light');">Skin Green-light</a></li>
+                                            <li><a href="javascript:void(0)" onclick="setTextValue('txtSkinSelection','skin-green');">Skin Green</a></li>
+                                            <li><a href="javascript:void(0)" onclick="setTextValue('txtSkinSelection','skin-purple-light');">Skin Purple-light</a></li>
+                                            <li><a href="javascript:void(0)" onclick="setTextValue('txtSkinSelection','skin-purple');">Skin Purple</a></li>
+                                            <li><a href="javascript:void(0)" onclick="setTextValue('txtSkinSelection','skin-red-light');">Skin Red-light</a></li>
+                                            <li><a href="javascript:void(0)" onclick="setTextValue('txtSkinSelection','skin-red');">Skin Red</a></li>
+                                            <li><a href="javascript:void(0)" onclick="setTextValue('txtSkinSelection','skin-yellow-light');">Skin Yellow-light</a></li>
+                                            <li><a href="javascript:void(0)" onclick="setTextValue('txtSkinSelection','skin-yellow');">Skin Yellow</a></li>
                                           </ul>
                                         </div>
                                       </div>
@@ -537,7 +509,7 @@ if (strtolower($_SESSION['WebProtection']) != 'true') {
                                 </div>
                             </div>
 <!-- Toggle DarkMode ------------------------------------------------------ -->
-                            <div class="settings_button_wrapper">
+                            <div class="settings_button_wrapper" id="Darkmode_button_container">
                                 <div class="settings_button_box">
                                 	<?php $state = convert_state($ENABLED_DARKMODE, 1);?>
                                     <button type="button" class="btn btn-default dbtools-button" id="btnEnableDarkmode" onclick="askEnableDarkmode()"><?=$pia_lang['Maintenance_Tool_darkmode'] . '<br>' . $state;?></button>
@@ -697,6 +669,10 @@ if (strtolower($_SESSION['WebProtection']) != 'true') {
                               <input class="checkbox blue" id="chkMACaddress" type="checkbox" <?=$col_checkbox['MACAddress'];?>>
                               <label class="control-label" style="margin-left: 5px"><?=$pia_lang['Device_TableHead_MAC'];?>-Address</label>
                             </div>
+                            <div class="table_settings_col_box" style="">
+                              <input class="checkbox blue" id="chkWakeOnLAN" type="checkbox" <?=$col_checkbox['WakeOnLAN'];?>>
+                              <label class="control-label" style="margin-left: 5px"><?=$pia_lang['Device_TableHead_WakeOnLAN'];?> (WakeOnLAN)</label>
+                            </div>
                             <br>
                             <button type="button" class="btn btn-default" style="margin-top:10px; width:160px;" id="btnSaveDeviceListCol" onclick="askDeviceListCol()" ><?=$pia_lang['Gen_Save'];?></button>
                         </div>
@@ -707,31 +683,37 @@ if (strtolower($_SESSION['WebProtection']) != 'true') {
         <div class="tab-pane <?=$pia_tab_tool;?>" id="tab_DBTools">
             <div class="db_info_table">
                 <div class="db_info_table_row">
-                    <div class="db_tools_table_cell_a" style="">
+                    <div class="db_tools_table_cell_a">
                         <button type="button" class="btn btn-default dbtools-button" id="btnDeleteMAC" onclick="askDeleteAllDevices()"><?=$pia_lang['Maintenance_Tool_del_alldev'];?></button>
                     </div>
                     <div class="db_tools_table_cell_b"><?=$pia_lang['Maintenance_Tool_del_alldev_text'];?></div>
                 </div>
                 <div class="db_info_table_row">
-                    <div class="db_tools_table_cell_a" style="">
+                    <div class="db_tools_table_cell_a">
                         <button type="button" class="btn btn-default dbtools-button" id="btnDeleteUnknown" onclick="askDeleteUnknown()"><?=$pia_lang['Maintenance_Tool_del_unknowndev'];?></button>
                     </div>
                     <div class="db_tools_table_cell_b"><?=$pia_lang['Maintenance_Tool_del_unknowndev_text'];?></div>
                 </div>
                 <div class="db_info_table_row">
-                    <div class="db_tools_table_cell_a" style="">
-                        <button type="button" class="btn btn-default dbtools-button" id="btnDeleteEvents" onclick="askDeleteEvents()"><?=$pia_lang['Maintenance_Tool_del_allevents'];?></button>
+                    <div class="db_tools_table_cell_a">
+                        <button type="button" class="btn btn-default dbtools-button" id="btnDeleteAllEvents" onclick="askDeleteEvents()"><?=$pia_lang['Maintenance_Tool_del_allevents'];?></button>
                     </div>
                     <div class="db_tools_table_cell_b"><?=$pia_lang['Maintenance_Tool_del_allevents_text'];?></div>
                 </div>
                 <div class="db_info_table_row">
-                    <div class="db_tools_table_cell_a" style="">
+                    <div class="db_tools_table_cell_a">
                         <button type="button" class="btn btn-default dbtools-button" id="btnDeleteActHistory" onclick="askDeleteActHistory()"><?=$pia_lang['Maintenance_Tool_del_ActHistory'];?></button>
                     </div>
                     <div class="db_tools_table_cell_b"><?=$pia_lang['Maintenance_Tool_del_ActHistory_text'];?></div>
                 </div>
                 <div class="db_info_table_row">
-                    <div class="db_tools_table_cell_a" style="">
+                    <div class="db_tools_table_cell_a">
+                        <button type="button" class="btn btn-default dbtools-button" id="btnDeleteInactiveHosts" onclick="askDeleteSpeedtestResults()"><?=$pia_lang['Maintenance_Tool_del_speedtest'];?></button>
+                    </div>
+                    <div class="db_tools_table_cell_b"><?=$pia_lang['Maintenance_Tool_del_speedtest_text'];?></div>
+                </div>
+                <div class="db_info_table_row">
+                    <div class="db_tools_table_cell_a">
                         <button type="button" class="btn btn-default dbtools-button" id="btnDeleteInactiveHosts" onclick="askDeleteInactiveHosts()"><?=$pia_lang['Maintenance_Tool_del_Inactive_Hosts'];?></button>
                     </div>
                     <div class="db_tools_table_cell_b"><?=$pia_lang['Maintenance_Tool_del_Inactive_Hosts_text'];?></div>
@@ -804,7 +786,7 @@ echo '</div>';
     </div>
 
     <div class="box box-solid box-danger collapsed-box" style="margin-top: -15px;">
-    <div class="box-header with-border" data-widget="collapse">
+    <div class="box-header with-border" data-widget="collapse" id="configeditor_innerbox">
            <h3 class="box-title"><?=$pia_lang['Maintenance_ConfEditor_Hint'];?></h3>
           <div class="box-tools pull-right">
             <button type="button" class="btn btn-box-tool"><i class="fa fa-plus"></i></button>
@@ -945,13 +927,22 @@ function deleteEvents() {
 	$.get('php/server/devices.php?action=deleteEvents', function(msg) {showMessage (msg);});
 }
 
-// delete Hostory
+// delete History
 function askDeleteActHistory() {
   showModalWarning('<?=$pia_lang['Maintenance_Tool_del_ActHistory_noti'];?>', '<?=$pia_lang['Maintenance_Tool_del_ActHistory_noti_text'];?>',
     '<?=$pia_lang['Gen_Cancel'];?>', '<?=$pia_lang['Gen_Delete'];?>', 'deleteActHistory');
 }
 function deleteActHistory() {
 	$.get('php/server/devices.php?action=deleteActHistory', function(msg) {showMessage (msg);});
+}
+
+// delete Speedtest results
+function askDeleteSpeedtestResults() {
+  showModalWarning('<?=$pia_lang['Maintenance_Tool_del_speedtest'];?>', '<?=$pia_lang['Maintenance_Tool_del_speedtest_text'];?>',
+    '<?=$pia_lang['Gen_Cancel'];?>', '<?=$pia_lang['Gen_Delete'];?>', 'DeleteSpeedtestResults');
+}
+function DeleteSpeedtestResults() {
+	$.get('php/server/devices.php?action=DeleteSpeedtestResults', function(msg) {showMessage (msg);});
 }
 
 // Backup DB to Archive
@@ -1139,6 +1130,7 @@ function setDeviceListCol() {
     + '&mactype='        + ($('#chkMACtype')[0].checked * 1)
     + '&macaddress='     + ($('#chkMACaddress')[0].checked * 1)
     + '&location='       + ($('#chkLocation')[0].checked * 1)
+    + '&wakeonlan='      + ($('#chkWakeOnLAN')[0].checked * 1)
     , function(msg) {
     showMessage (msg);
   });
@@ -1190,6 +1182,8 @@ function initializeiCheck () {
 
 }
 
+var StatusBoxARPCountdown; 
+
 function startCountdown() {
     var currentTime = new Date();
     var minutes = currentTime.getMinutes();
@@ -1199,11 +1193,14 @@ function startCountdown() {
     var countdownMinutes = (4 - (minutes % 5)) % 5;
     var countdownSeconds = 60 - seconds;
 
+    // Stop Countdown
+    clearInterval(StatusBoxARPCountdown);
+
     // Display initial countdown
     displayCountdown(countdownMinutes, countdownSeconds);
 
     // Update countdown every second
-    setInterval(function() {
+    StatusBoxARPCountdown = setInterval(function() {
         countdownSeconds--;
         if (countdownSeconds < 0) {
             countdownSeconds = 59;
@@ -1213,6 +1210,7 @@ function startCountdown() {
                 // Reset countdown for the next 5-minute interval
                 countdownMinutes = 4;
                 countdownSeconds = 59;
+                GetARPStatus();
             }
         }
         displayCountdown(countdownMinutes, countdownSeconds);
@@ -1228,6 +1226,34 @@ function formatTime(time) {
     return time < 10 ? '0' + time : time;
 }
 
+function GetARPStatus() {
+  $.get('php/server/devices.php?action=GetARPStatus', function(data) {
+    var arpproccount = JSON.parse(data);
+
+    $('#arpproccounter').html(arpproccount[0].toLocaleString());
+  } );
+}
+
+function GetModalLogContent() {
+  $.get('php/server/files.php?action=GetLogfiles', function(data) {
+    var logcollection = JSON.parse(data);
+
+    $('#modal_scan_content').html(logcollection[0].toLocaleString());
+    $('#modal_iplog_content').html(logcollection[1].toLocaleString());
+    $('#modal_vendor_content').html(logcollection[2].toLocaleString());
+    $('#modal_cleanup_content').html(logcollection[3].toLocaleString());
+    $('#modal_webservices_content').html(logcollection[4].toLocaleString());
+  } );
+}
+
+function UpdateStatusBox() {
+	GetModalLogContent();
+	GetARPStatus();
+	startCountdown();
+}
+
+setInterval(UpdateStatusBox, 15000);
+GetModalLogContent();
 startCountdown();
 </script>
 

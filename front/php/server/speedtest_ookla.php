@@ -9,6 +9,7 @@
 //------------------------------------------------------------------------------
 
 session_start();
+ini_set('max_execution_time', '60');
 
 if ($_SESSION["login"] != 1) {
 	header('Location: ../../index.php');
@@ -29,7 +30,7 @@ $DBFILE = '../../../db/pialert.db';
 OpenDB();
 
 $speedtest_binary = '../../../back/speedtest/speedtest';
-$speedtest_option = ' -p no -f json';
+$speedtest_option = ' --accept-license --accept-gdpr -p no -f json';
 $supported_arch = array('i386', 'x86_64', 'armel', 'armhf', 'aarch64');
 $mod = $_REQUEST['mod'];
 

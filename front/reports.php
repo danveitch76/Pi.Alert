@@ -28,7 +28,7 @@ function get_notification_class($filename) {
 	$headtitle = explode("-", $filename);
 	$headeventtype = explode("_", $filename);
 	$temp_class[0] = substr($headeventtype[1], 0, -4);
-	if ($temp_class[0] == "Events" || $temp_class[0] == "Down" || $temp_class[0] == "New Devices") {
+	if ($temp_class[0] == "Events" || $temp_class[0] == "Devices Down" || $temp_class[0] == "New Devices") {
 		$temp_class[1] = 'arp';
 		$temp_class[2] = substr($headtitle[0], 6, 2) . '.' . substr($headtitle[0], 4, 2) . '.' . substr($headtitle[0], 2, 2) . '/' . substr($headtitle[1], 0, 2) . ':' . substr($headtitle[1], 2, 2);
 		return $temp_class;
@@ -65,7 +65,7 @@ function process_standard_notifications($class_name, $event_time, $filename, $di
 	$x = 0;
 	foreach ($lines as $line) {
 		$x++;
-		if ($x < (sizeof($lines) - 2)) {
+		if ($x < (sizeof($lines) - 1)) {
 			if (stristr($line, "MAC:")) {
 				// edit MAC line - add link
 				$tempmac = explode(": ", $line);
@@ -92,7 +92,16 @@ function process_standard_notifications($class_name, $event_time, $filename, $di
 				} else {
 					$webgui_report .= "\tHTTP Status Code:\t<span class=\"text-green\">" . $tempmac[1] . "</span>\n";
 				}
-			} else {
+			} elseif (stristr($line, "\tSSL Status:")) {
+				// edit Event line - add color depending on status
+				$tempmac = explode(": ", $line);
+				$tempmac[1] = trim($tempmac[1]);
+				if ($tempmac[1] != "0") {
+					$webgui_report .= "\tSSL Status:\t\t<span class=\"text-red\">" . $tempmac[1] . "</span>\n";
+				} else {
+					$webgui_report .= "\tSSL Status:\t\t<span class=\"text-green\">" . $tempmac[1] . "</span>\n";
+				}
+			}else {
 				// Default handling
 				$webgui_report .= $line;
 			}

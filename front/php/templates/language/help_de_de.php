@@ -15,7 +15,7 @@ $help_lang['Cat_General_100_text_c'] = 'Suche in dieser Datei nach dem Eintrag "
 $help_lang['Cat_General_101_head'] = 'Mein Netzwerk scheint langsamer zu werden, Streaming "ruckelt".';
 $help_lang['Cat_General_101_text'] = 'Es kann durchaus sein, dass leistungsschwache Geräte mit der Art und Weise, wie Pi.Alert neue Geräte im Netzwerk erkennt, an ihre Leistungsgrenzen stoßen. Dies verstärkt sich noch einmal, wenn diese Geräte per WLAN mit dem Netzwerk kommunizieren. Lösungen wären hier, wenn möglich ein Wechsel auf eine Kabelverbindung oder, falls das Geräte nur einen begrenzten Zeitraum genutzt werden soll, den arp-Scan auf der Wartungsseite zu pausieren.';
 $help_lang['Cat_General_102_head'] = 'Ich bekomme die Meldung, dass die Datenbank schreibgeschützt (read only) ist.';
-$help_lang['Cat_General_102_text'] = 'Möglicherweise werden durch das Backend gerade Änderungen in die Datenbank geschrieben. Probiere es nach einer kurzen Wartezeit einfach noch einmal. Sollte sich das Verhalten nicht ändern, halte dich an die folgenden Hinweise. <br><br>
+$help_lang['Cat_General_102_text'] = 'Möglicherweise werden durch das Backend gerade Änderungen in die Datenbank geschrieben. Probiere es nach einer kurzen Wartezeit einfach noch einmal. Wenn du größere Änderungen in der Geräteliste machen möchtest, ist es sinnvoll Pi.Alert für den Zeitrauf der Bearbeitung, auf der Einstellungsseite, zu pausieren. Sollte das Verhalten dauerhaft sein, halte dich an die folgenden Hinweise. <br><br>
 									 Prüfe im Pi.Alert Verzeichnis, ob der Ordner der Datenbank (db) die richtigen Rechte zugewiesen bekommen hat:<br>
       								 <span class="text-maroon help_faq_code">drwxrwxr-x  2 (dein Username) www-data</span><br>
       								 Sollte die Berechtigung nicht stimmen, kannst du sie mit folgenden Befehlen im Terminal oder der Konsole wieder setzen:<br>
@@ -247,16 +247,16 @@ $help_lang['Cat_General_107_text'] = 'Die Datei <span class="text-maroon help_fa
 									<table class="help_table_gen">
 									    <tr><td class="help_table_gen_section" colspan="2">Automatic Speedtest</td></tr>
 									    <tr><td class="help_table_gen_a">SPEEDTEST_TASK_ACTIVE</td>
-									        <td class="help_table_gen_b">Automatischen Speedtest aktivieren/deaktivieren</td></tr>
+									        <td class="help_table_gen_b">Automatischen Speedtest aktivieren/deaktivieren. Hierfür ist die Installation des Ookla Speedtests im Tab "Tools" des Gerätes "Internet" erforderlich. Beachte die Hinweise bei der Installation.</td></tr>
 									    <tr><td class="help_table_gen_a">SPEEDTEST_TASK_HOUR</td>
-									        <td class="help_table_gen_b">Volle Stunde(n) zu denen der Speedtest gestartet werden soll.</td></tr>
+									        <td class="help_table_gen_b">Volle Stunde, oder durch Komma getrennte Stunden, zu denen der Speedtest gestartet werden soll.</td></tr>
 									</table>
 									<table class="help_table_gen">
 									    <tr><td class="help_table_gen_section" colspan="2">Arp-scan Options & Samples</td></tr>
 									    <tr><td class="help_table_gen_a">MAC_IGNORE_LIST</td>
 									        <td class="help_table_gen_b">
 									            <span class="text-maroon help_faq_code">[&apos;MAC-Adresse 1&apos;, &apos;MAC-Adresse 2&apos;]</span><br>
-									            Diese MAC-Adresse(n) (mit kleinen Buchstaben abspeichern) werden aus den Scan-Ergebnissen herausgefiltert.</td></tr>
+									            Diese MAC-Adresse(n) (mit kleinen Buchstaben abspeichern) werden aus den Scan-Ergebnissen herausgefiltert. Es ist auch möglich, nur den Anfang einer MAC-Adresse anzugeben. Alle Adressen mit dem gleichen Anfang, werden ebenfalls herausgefiltert.</td></tr>
 									    <tr><td class="help_table_gen_a">SCAN_SUBNETS</td>
 									        <td class="help_table_gen_b">
 									        	&lsquo;<span class="text-maroon help_faq_code">--localnet</span>&rsquo;<br>
@@ -314,7 +314,7 @@ $help_lang['Cat_General_107_text'] = 'Die Datei <span class="text-maroon help_fa
 									    <tr><td class="help_table_gen_a">UNIFI_IP</td>
 									        <td class="help_table_gen_b">IP-Adresse des Unifi Systems.</td></tr>
 									    <tr><td class="help_table_gen_a">UNIFI_API</td>
-									        <td class="help_table_gen_b">Mögliche UNIFI APIs sind v4, v5, unifiOS, UDMP-unifiOS</td></tr>
+									        <td class="help_table_gen_b">Mögliche UNIFI APIs sind v4, v5, unifiOS, UDMP-unifiOS, default</td></tr>
 									    <tr><td class="help_table_gen_a">UNIFI_USER</td>
 									        <td class="help_table_gen_b">Benutzername</td></tr>
 									    <tr><td class="help_table_gen_a">UNIFI_PASS</td>
@@ -337,6 +337,8 @@ $help_lang['Cat_General_108_text'] = '<ol>
 										<li>Folge nun den Anweisungen</li>
 										<li>Nach dem erfolgreichen Update, sollte Pi.Alert wieder von allein starten. Alternativ kann du auf der Einsellungsseite auch manuell wieder starten.</li>
 									</ol>';
+$help_lang['Cat_General_109_head'] = 'Was bedeutet "(<span style="color:red;">*</span>)" hinter dem letzem Änderungsdatum?';
+$help_lang['Cat_General_109_text'] = 'Wenn das Journal einen Eintrag in die Datenbank schreiben möchte, während diese gerade in Verwendung ist, wird eine Pufferdatei erzeugt, die, sobald das Journal erneut in die Datenbank schreiben möchte, ebenfalls in die Datenbank übernommen wird. Andernfalls wird die Pufferdatei weiterverwendet. Diese Datei kommt nur für das Journal zum Einsatz.';
 
 $help_lang['Cat_Device_200_head'] = 'Ich habe Geräte in meiner Liste, die mir unbekannt sind, oder die ich nicht mehr verwende. Nach dem Löschen tauchen diese immer wieder auf.';
 $help_lang['Cat_Device_200_text'] = 'Wenn du Pi-hole verwendest, beachte bitte, dass Pi.Alert Informationen von Pi-hole abruft. Pausiere Pi.Alert, gehe in Pi-hole auf die Settings-Seite und
@@ -375,12 +377,12 @@ $help_lang['Cat_Network_601_text'] = 'Die Seite besteht aus 2 Komponenten: Der D
 									 Verwaltungsseite hat auschließlich Auswirkungen auf die Darstellungsseite, jedoch nicht auf die Geräte Liste selbst. <br>
 									 <br>
 									 Auf der Verwaltungsseite wird z.B. ein Switch erstellt. Bereits erkannte Geräte werden in der Auswahlliste angezeigt. Du gibt\'s zusätzlich den Typ und die Portanzahl an.<br><br>
-										 In der Detailansicht eines jeden erkannten Gerätes, hast du nun die Möglichkeit, diesen gerade erstellten Switch und den belegten Port zu speichern.<br><br>
-										 Jetzt zeigt dir die Netzwerk Darstellunsseite den Switch mit seinen Ports und den daran angeschlossenen Geräten an. Du hast bei jedem Gerät in der Detailansicht die Möglichkeit,
+									 In der Detailansicht eines jeden erkannten Gerätes, hast du nun die Möglichkeit, diesen gerade erstellten Switch und den belegten Port zu speichern.<br><br>
+									 Jetzt zeigt dir die Netzwerk Darstellunsseite den Switch mit seinen Ports und den daran angeschlossenen Geräten an. Du hast bei jedem Gerät in der Detailansicht die Möglichkeit,
 									 mehrere Ports an einem Switch, die du mit einem Komma trennst, zu belegen (z.B. bei Link-Aggregation). Auch ist es möglich, mehrere Geräte einem Port zuzuordnen (z.B. ein Server
 									 mit mehreren virtuellen Maschinen).<br>
 									 <br>
-										 Einen Switch kannst du analog dazu auch einem Router zuweisen, wenn du diesen zuvor auf der Verwaltungsseite erstellt hast. Im Normalfall wird dieser Switch nun auf dem Router-Tab
+									 Einen Switch kannst du analog dazu auch einem Router zuweisen, wenn du diesen zuvor auf der Verwaltungsseite erstellt hast. Im Normalfall wird dieser Switch nun auf dem Router-Tab
 									 angezeigt. Was aber nicht geschieht ist, dass der Router auf dem Switchport angezeigt wird. Hierfür ist es nötig und möglich, eine manuelle Port-Konfiguration zu speichern. Dazu
 									 rufst du die Verwaltungsseite auf und wählst den Switch in der Bearbeitung aus. Nachdem du den Typ und die Portanzahl erneut eingegeben hast (falls das automatische Ausfüllen nicht
 									 funktioniert), hast du im untersten Feld eine Auswahlliste an möglichen Geräte. Nach der Auswahl ist nur noch die MAC-Adresse, gefolgt von einem "," zu sehen. Füge hier nun einfach
@@ -403,8 +405,10 @@ $help_lang['Cat_Service_702_text'] = 'Feststellbare Events sind:<br>
 											<li>Änderung des HTTP Status Codes</li>
 											<li>Änderung der IP</li>
 											<li>Antwortzeit des Servers bzw. das Ausbleiben der Antwort</li>
+											<li>Änderungen am SSL Zertifikat</li>
 										</ul>
-									 Je nach Wahl der Benachrichtigung, wird entweder alles gemeldet, oder nur das Ausbleiben einer Serverantwort.';
+									 Je nach Wahl der Benachrichtigung, wird entweder alles gemeldet, oder nur das Ausbleiben einer Serverantwort. Bei Änderungen am Zertifikat kommt ein Code zum Einsatz, der folgendermaßen berechnet wird.
+									 Hierbei werden den einzelnen Feldern die Werte 8 = Subject, 4 = Issuer, 2 = Valid from und 1 = Valid to zugewiesen. Ein Code 13 bedeutet also, dass es Änderungen in den Feldern Subject, Issuer und Valid to gab.';
 $help_lang['Cat_Service_703_head'] = 'Allgemeines zum "Web Service Monitoring".';
 $help_lang['Cat_Service_703_text'] = 'Das Monitoring basiert ausschließlich auf den Antworten von  HTTP-Requests, welche an die Seite gesendet werden. Je nach Zustand des Servers können hier sinnvolle Fehlerbilder erkannt werden. Falls der Server überhaupt nicht reagiert, wird dies als "Down/Offline" gewertet. Diese Webserver-Anfragen werden alle 10min im Rahmen der Rahmen des normalen Scans durchgeführt.';
 $help_lang['Cat_ServiceDetails_750_head'] = 'Ich kann nicht alle Felder bearbeiten.';

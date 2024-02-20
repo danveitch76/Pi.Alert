@@ -43,35 +43,32 @@ import paho.mqtt.publish as publish
 # CONFIG CONSTANTS
 #===============================================================================
 PIALERT_BACK_PATH = os.path.dirname(os.path.abspath(__file__))
-PIALERT_PATH = PIALERT_BACK_PATH + "/.."
-PIALERT_WEBSERVICES_LOG = PIALERT_PATH + "/log/pialert.webservices.log"
-STOPPIALERT = PIALERT_PATH + "/db/setting_stoppialert"
-PIALERT_DB_FILE = PIALERT_PATH + "/db/pialert.db"
-REPORTPATH_WEBGUI = PIALERT_PATH + "/front/reports/"
+PIALERT_PATH = f"{PIALERT_BACK_PATH}/.."
+PIALERT_WEBSERVICES_LOG = f"{PIALERT_PATH}/log/pialert.webservices.log"
+STOPPIALERT = f"{PIALERT_PATH}/db/setting_stoppialert"
+PIALERT_DB_FILE = f"{PIALERT_PATH}/db/pialert.db"
+REPORTPATH_WEBGUI = f"{PIALERT_PATH}/front/reports/"
 MQTT_UUID = uuid.uuid4()
 
 if (sys.version_info > (3,0)):
-    exec(open(PIALERT_PATH + "/config/version.conf").read())
-    exec(open(PIALERT_PATH + "/config/pialert.conf").read())
+  exec(open(f"{PIALERT_PATH}/config/version.conf").read())
+  exec(open(f"{PIALERT_PATH}/config/pialert.conf").read())
 else:
-    execfile (PIALERT_PATH + "/config/version.conf")
-    execfile (PIALERT_PATH + "/config/pialert.conf")
+  execfile(f"{PIALERT_PATH}/config/version.conf")
+  execfile(f"{PIALERT_PATH}/config/pialert.conf")
 
 #===============================================================================
 # MAIN
 #===============================================================================
-def main ():
+def main():
     global startTime
     global cycle
     global log_timestamp
 
     # Header
-    print ('\nPi.Alert ' + VERSION +' ('+ VERSION_DATE +')')
-    print ('---------------------------------------------------------')
-    print("Current User: %s \n" % get_username())
-    
-    # If user is a sudoer, you can uncomment the line below to set the correct db permission every scan
-    # set_pia_file_permissions()
+    print('\nPi.Alert v'+ VERSION_DATE)
+    print('---------------------------------------------------------')
+    print(f"Executing user: {get_username()}\n")
     
     # Initialize global variables
     log_timestamp  = datetime.datetime.now()
@@ -107,18 +104,14 @@ def get_username():
     return pwd.getpwuid(os.getuid())[0]
 
 # ------------------------------------------------------------------------------
-def set_pia_file_permissions():
-    os.system("sudo chown " + get_username() + ":www-data " + PIALERT_DB_FILE)
-
-# ------------------------------------------------------------------------------
-def set_pia_reports_permissions():
-    os.system("sudo chown -R " + get_username() + ":www-data " + REPORTPATH_WEBGUI)
-    os.system("sudo chmod -R 775 " + REPORTPATH_WEBGUI)
+def set_reports_file_permissions():
+  os.system(f"sudo chown -R {get_username()}:www-data {REPORTPATH_WEBGUI}")
+  os.system(f"sudo chmod -R 775 {REPORTPATH_WEBGUI}")
 
 #===============================================================================
 # Sending Notofications
 #===============================================================================
-def sending_notifications_test (_Mode):
+def sending_notifications_test(_Mode):
     if _Mode == 'Test' :
         notiMessage = "Test-Notification"
     elif _Mode == 'noti_Timerstart' :
@@ -165,32 +158,35 @@ def sending_notifications_test (_Mode):
     return 0
 
 #-------------------------------------------------------------------------------
-def send_ntfy_test (_notiMessage):
-    headers = {
-        "Title": "Pi.Alert Notification",
-        "Click": REPORT_DASHBOARD_URL,
-        "Priority": NTFY_PRIORITY,
-        "Tags": "warning"
-    }
-    # if username and password are set generate hash and update header
-    if NTFY_USER != "" and NTFY_PASSWORD != "":
+def send_ntfy_test(_notiMessage):
+  headers = {
+      "Title": "Pi.Alert Notification",
+      "Click": REPORT_DASHBOARD_URL,
+      "Priority": NTFY_PRIORITY,
+      "Tags": "warning"
+  }
+  if NTFY_USER != "" and NTFY_PASSWORD != "":
     # Generate hash for basic auth
-        usernamepassword = "{}:{}".format(NTFY_USER,NTFY_PASSWORD)
-        basichash = b64encode(bytes(NTFY_USER + ':' + NTFY_PASSWORD, "utf-8")).decode("ascii")
+    usernamepassword = f"{NTFY_USER}:{NTFY_PASSWORD}"
+    basichash = b64encode(bytes(f'{NTFY_USER}:{NTFY_PASSWORD}',
+                                "utf-8")).decode("ascii")
 
     # add authorization header with hash
-        headers["Authorization"] = "Basic {}".format(basichash)
+    headers["Authorization"] = f"Basic {basichash}"
 
-    requests.post("{}/{}".format( NTFY_HOST, NTFY_TOPIC),
-    data=_notiMessage,
-    headers=headers)
+  requests.post(f"{NTFY_HOST}/{NTFY_TOPIC}", data=_notiMessage, headers=headers)
 
 #-------------------------------------------------------------------------------
-def send_pushsafer_test (_notiMessage):
+def send_pushsafer_test(_notiMessage):
     try:
         notification_target = PUSHSAFER_DEVICE
     except NameError:
         notification_target = "a"
+
+    try:
+        result = PUSHSAFER_PRIO
+    except NameError:
+        PUSHSAFER_PRIO = 0
 
     url = 'https://www.pushsafer.com/api'
     post_fields = {
@@ -204,35 +200,41 @@ def send_pushsafer_test (_notiMessage):
         "u" : REPORT_DASHBOARD_URL,
         "ut" : 'Open Pi.Alert',
         "k" : PUSHSAFER_TOKEN,
+        "pr" : PUSHSAFER_PRIO,
         }
     requests.post(url, data=post_fields)
 
 #-------------------------------------------------------------------------------
-def send_pushover_test (_notiMessage):
+def send_pushover_test(_notiMessage):
+    try:
+        result = PUSHOVER_PRIO
+    except NameError:
+        PUSHOVER_PRIO = 0
+
     url = 'https://api.pushover.net/1/messages.json'
     post_fields = {
         "token": PUSHOVER_TOKEN,
         "user": PUSHOVER_USER,
         "title" : 'Pi.Alert Message',
         "message" : _notiMessage,
+        "priority" : PUSHOVER_PRIO,
         }
     requests.post(url, data=post_fields)
 
 #-------------------------------------------------------------------------------
-def send_telegram_test (_notiMessage):
-    runningpath = os.path.abspath(os.path.dirname(__file__))
-    stream = os.popen(runningpath+'/shoutrrr/'+SHOUTRRR_BINARY+'/shoutrrr send --url "'+TELEGRAM_BOT_TOKEN_URL+'" --message "'+_notiMessage+'" --title "Pi.Alert"')
+def send_telegram_test(_notiMessage):
+  runningpath = os.path.abspath(os.path.dirname(__file__))
+  stream = os.popen(
+      f'{runningpath}/shoutrrr/{SHOUTRRR_BINARY}/shoutrrr send --url "{TELEGRAM_BOT_TOKEN_URL}" --message "{_notiMessage}" --title "Pi.Alert"'
+  )
 
 #-------------------------------------------------------------------------------
-def send_webgui_test (_notiMessage):
-    # Remove one linebrake between "Server" and the headline of the event type
-    # extract event type headline to use it in the notification headline
-    _webgui_filename = time.strftime("%Y%m%d-%H%M%S") + "_Test.txt"
-    if (os.path.exists(REPORTPATH_WEBGUI + _webgui_filename) == False):
-        f = open(REPORTPATH_WEBGUI + _webgui_filename, "w")
-        f.write(_notiMessage)
-        f.close()
-    set_pia_reports_permissions()
+def send_webgui_test(_notiMessage):
+  _webgui_filename = time.strftime("%Y%m%d-%H%M%S") + "_Test.txt"
+  if (os.path.exists(REPORTPATH_WEBGUI + _webgui_filename) == False):
+    with open(REPORTPATH_WEBGUI + _webgui_filename, "w") as f:
+      f.write(_notiMessage)
+  set_reports_file_permissions()
 
 #-------------------------------------------------------------------------------
 def send_mqtt_test (_notiMessage):    # Settings for sending MQTT to Broker
@@ -266,34 +268,34 @@ def send_mqtt_test (_notiMessage):    # Settings for sending MQTT to Broker
 #-------------------------------------------------------------------------------
 def remove_tag (pText, pTag):
     # return text without the tag
-    return pText.replace ('<'+ pTag +'>','').replace ('</'+ pTag +'>','')
+  return pText.replace(f'<{pTag}>', '').replace(f'</{pTag}>', '')
 
 #-------------------------------------------------------------------------------
-def write_file (pPath, pText):
+def write_file(pPath, pText):
     # Write the text depending using the correct python version
-    if sys.version_info < (3, 0):
-        file = io.open (pPath , mode='w', encoding='utf-8')
-        file.write ( pText.decode('unicode_escape') ) 
-        file.close() 
-    else:
-        file = open (pPath, 'w', encoding='utf-8') 
-        file.write (pText) 
-        file.close() 
+  if sys.version_info < (3, 0):
+    file = io.open (pPath , mode='w', encoding='utf-8')
+    file.write ( pText.decode('unicode_escape') )
+  else:
+    file = open (pPath, 'w', encoding='utf-8')
+    file.write (pText) 
+
+  file.close() 
 
 #-------------------------------------------------------------------------------
-def append_line_to_file (pPath, pText):
+def append_line_to_file(pPath, pText):
     # append the line depending using the correct python version
-    if sys.version_info < (3, 0):
-        file = io.open (pPath , mode='a', encoding='utf-8')
-        file.write ( pText.decode('unicode_escape') ) 
-        file.close() 
-    else:
-        file = open (pPath, 'a', encoding='utf-8') 
-        file.write (pText) 
-        file.close() 
+  if sys.version_info < (3, 0):
+    file = io.open (pPath , mode='a', encoding='utf-8')
+    file.write ( pText.decode('unicode_escape') )
+  else:
+    file = open (pPath, 'a', encoding='utf-8')
+    file.write (pText) 
+
+  file.close() 
 
 #-------------------------------------------------------------------------------
-def send_email (pText, pHTML):
+def send_email(pText, pHTML):
     # Compose email
     msg = MIMEMultipart('alternative')
     msg['Subject'] = 'Pi.Alert Report'
@@ -316,14 +318,12 @@ def send_email (pText, pHTML):
 
 #-------------------------------------------------------------------------------
 def SafeParseGlobalBool(boolVariable):
-    if boolVariable in globals():
-        return eval(boolVariable)
-    return False
+  return eval(boolVariable) if boolVariable in globals() else False
 
 #===============================================================================
 # UTIL
 #===============================================================================
-def print_log (pText):
+def print_log(pText):
     global log_timestamp
 
     # Check LOG actived

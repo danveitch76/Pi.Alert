@@ -75,9 +75,56 @@ if (isset($_REQUEST['action']) && !empty($_REQUEST['action'])) {
 		break;
 	case 'setFavIconURL':setFavIconURL();
 		break;
+	case 'GetLogfiles':GetLogfiles();
+		break;
+	case 'GetServerTime':GetServerTime();
+		break;
+	case 'GetUpdateStatus':GetUpdateStatus();
+		break;
 	default:logServerConsole('Action: ' . $action);
 		break;
 	}
+}
+
+function GetUpdateStatus() {
+	$updatenotification = '../../auto_Update.info';
+	if (file_exists($updatenotification)) {
+		$answer[0] = "i";
+		echo (json_encode($answer));
+	} else {
+		$answer[0] = "";
+		echo (json_encode($answer));
+	}
+}
+
+function GetServerTime() {
+	echo date("Y,n,j,G,i,s");
+}
+
+// Read logfiles --------------------------------------------------------------
+function GetLogfiles() {
+	global $pia_lang;
+
+	$logfiles = ["pialert.1.log", "pialert.IP.log", "pialert.vendors.log", "pialert.cleanup.log", "pialert.webservices.log"];
+	$logmessage = [$pia_lang['Maintenance_Tools_Logviewer_Scan_empty'], $pia_lang['Maintenance_Tools_Logviewer_IPLog_empty'], '', $pia_lang['Maintenance_Tools_Logviewer_Cleanup_empty'], $pia_lang['Maintenance_Tools_Logviewer_WebServices_empty']];
+
+	$i = 0;
+	$logs = array();
+	while($i < count($logfiles)) {
+		$file = file_get_contents($logfiles[$i], true);
+		if ($file == "") {
+			array_push($logs, $logmessage[$i]);
+		} else {
+			if ($logfile[$i] == "pialert.webservices.log") {
+				$file = str_replace("Start Services Monitoring\n\n", "Start Services Monitoring\n\n<pre style=\"border: solid 1px #666; background-color: transparent;\">", $file);
+				$file = str_replace("\nServices Monitoring Changes:", "\n</pre>Services Monitoring Changes:", $file);
+			}
+			$templog = str_replace("\n", '<br>', str_replace("    ", '&nbsp;&nbsp;&nbsp;&nbsp;', str_replace("        ", '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;', $file)));
+			array_push($logs, $templog);
+		}
+	    $i++;
+	}
+	echo (json_encode($logs));
 }
 
 function convert_bool($var) {
@@ -114,6 +161,18 @@ function SaveConfigFile() {
 	if (substr($configArray['SCAN_SUBNETS'], 0, 2) == "--") {$configArray['SCAN_SUBNETS'] = "'" . $configArray['SCAN_SUBNETS'] . "'";} else {
 		$configArray['SCAN_SUBNETS'] = str_replace($ignorlist_search, $ignorlist_replace, $configArray['SCAN_SUBNETS']);
 	}
+	if ($configArray['PUSHSAFER_PRIO'] == "") {$configArray['PUSHSAFER_PRIO'] = 0;}
+	if ($configArray['PUSHOVER_PRIO'] == "") {$configArray['PUSHOVER_PRIO'] = 0;}
+	
+	$configArray['NETWORK_DNS_SERVER'] = str_replace(" ", "", $configArray['NETWORK_DNS_SERVER']);
+	if ($configArray['NETWORK_DNS_SERVER'] == "") {
+		$configArray['NETWORK_DNS_SERVER'] = "localhost";
+	} else {
+		if (filter_var(gethostbyname($configArray['NETWORK_DNS_SERVER']), FILTER_VALIDATE_IP)) {
+		    $configArray['NETWORK_DNS_SERVER'] = $configArray['NETWORK_DNS_SERVER'];
+		} else {$configArray['NETWORK_DNS_SERVER'] = "localhost";}
+	}
+
 
 	$config_template = "# General Settings
 # ----------------------
@@ -125,6 +184,8 @@ VENDORS_DB             = '" . $configArray['VENDORS_DB'] . "'
 PIALERT_APIKEY         = '" . $configArray['PIALERT_APIKEY'] . "'
 PIALERT_WEB_PROTECTION = " . convert_bool($configArray['PIALERT_WEB_PROTECTION']) . "
 PIALERT_WEB_PASSWORD   = '" . $configArray['PIALERT_WEB_PASSWORD'] . "'
+NETWORK_DNS_SERVER     = '" . $configArray['NETWORK_DNS_SERVER'] . "'
+AUTO_UPDATE_CHECK      = " . convert_bool($configArray['AUTO_UPDATE_CHECK']) . "
 
 # Other Modules
 # ----------------------
@@ -165,6 +226,7 @@ REPORT_PUSHSAFER         = " . convert_bool($configArray['REPORT_PUSHSAFER']) . 
 REPORT_PUSHSAFER_WEBMON  = " . convert_bool($configArray['REPORT_PUSHSAFER_WEBMON']) . "
 PUSHSAFER_TOKEN          = '" . $configArray['PUSHSAFER_TOKEN'] . "'
 PUSHSAFER_DEVICE         = '" . $configArray['PUSHSAFER_DEVICE'] . "'
+PUSHSAFER_PRIO           = " . $configArray['PUSHSAFER_PRIO'] . "
 
 # Pushover
 # ----------------------
@@ -172,6 +234,7 @@ REPORT_PUSHOVER         = " . convert_bool($configArray['REPORT_PUSHOVER']) . "
 REPORT_PUSHOVER_WEBMON  = " . convert_bool($configArray['REPORT_PUSHOVER_WEBMON']) . "
 PUSHOVER_TOKEN          = '" . $configArray['PUSHOVER_TOKEN'] . "'
 PUSHOVER_USER           = '" . $configArray['PUSHOVER_USER'] . "'
+PUSHOVER_PRIO           = " . $configArray['PUSHOVER_PRIO'] . "
 
 # NTFY
 #---------------------------
@@ -262,7 +325,7 @@ UNIFI_IP     = '" . $configArray['UNIFI_IP'] . "'
 UNIFI_API    = '" . $configArray['UNIFI_API'] . "'
 UNIFI_USER   = '" . $configArray['UNIFI_USER'] . "'
 UNIFI_PASS   = '" . $configArray['UNIFI_PASS'] . "'
-# Possible UNIFI APIs are v4, v5, unifiOS, UDMP-unifiOS
+# Possible UNIFI APIs are v4, v5, unifiOS, UDMP-unifiOS, default
 
 # Maintenance Tasks Cron
 # ----------------------
@@ -459,8 +522,9 @@ function setDeviceListCol() {
 	if (($_REQUEST['mactype'] == 0) || ($_REQUEST['mactype'] == 1)) {$Set_MACType = $_REQUEST['mactype'];} else {echo "Error. Wrong variable value!";exit;}
 	if (($_REQUEST['macaddress'] == 0) || ($_REQUEST['macaddress'] == 1)) {$Set_MACAddress = $_REQUEST['macaddress'];} else {echo "Error. Wrong variable value!";exit;}
 	if (($_REQUEST['location'] == 0) || ($_REQUEST['location'] == 1)) {$Set_Location = $_REQUEST['location'];} else {echo "Error. Wrong variable value!";exit;}
+	if (($_REQUEST['wakeonlan'] == 0) || ($_REQUEST['wakeonlan'] == 1)) {$Set_WakeOnLAN = $_REQUEST['wakeonlan'];} else {echo "Error. Wrong variable value!";exit;}
 	echo $pia_lang['BackDevices_DevListCol_noti_text'];
-	$config_array = array('ConnectionType' => $Set_ConnectionType, 'Favorites' => $Set_Favorites, 'Group' => $Set_Group, 'Owner' => $Set_Owner, 'Type' => $Set_Type, 'FirstSession' => $Set_First_Session, 'LastSession' => $Set_Last_Session, 'LastIP' => $Set_LastIP, 'MACType' => $Set_MACType, 'MACAddress' => $Set_MACAddress, 'Location' => $Set_Location);
+	$config_array = array('ConnectionType' => $Set_ConnectionType, 'Favorites' => $Set_Favorites, 'Group' => $Set_Group, 'Owner' => $Set_Owner, 'Type' => $Set_Type, 'FirstSession' => $Set_First_Session, 'LastSession' => $Set_Last_Session, 'LastIP' => $Set_LastIP, 'MACType' => $Set_MACType, 'MACAddress' => $Set_MACAddress, 'Location' => $Set_Location, 'WakeOnLAN' => $Set_WakeOnLAN);
 	$DevListCol_file = '../../../db/setting_devicelist';
 	$DevListCol_new = fopen($DevListCol_file, 'w');
 	fwrite($DevListCol_new, json_encode($config_array));
@@ -572,7 +636,7 @@ function SetAPIKey() {
 function setTheme() {
 	global $pia_lang;
 
-	$pia_installed_skins = array('skin-black-light',
+	$installed_skins = array('skin-black-light',
 		'skin-black',
 		'skin-blue-light',
 		'skin-blue',
@@ -585,24 +649,57 @@ function setTheme() {
 		'skin-yellow-light',
 		'skin-yellow');
 
+	$installed_themes = array('leiweibau_dark',
+		'leiweibau_light');
+
 	if (isset($_REQUEST['SkinSelection'])) {
-		$pia_skin_set_dir = '../../../db/';
+		$skin_set_dir = '../../../db/';
 		// echo "Enter Level 1";
-		$pia_skin_selector = htmlspecialchars($_REQUEST['SkinSelection']);
-		if (in_array($pia_skin_selector, $pia_installed_skins)) {
-			foreach ($pia_installed_skins as $file) {
-				unlink($pia_skin_set_dir . '/setting_' . $file);
+		$skin_selector = htmlspecialchars($_REQUEST['SkinSelection']);
+		if (in_array($skin_selector, $installed_skins)) {
+			// lösche alle vorherigen skins
+			foreach ($installed_skins as $file) {
+				unlink($skin_set_dir . '/setting_' . $file);
 			}
-			foreach ($pia_installed_skins as $file) {
-				if (file_exists($pia_skin_set_dir . '/setting_' . $file)) {
-					$pia_skin_error = True;
+			// lösche alle vorherigen themes
+			foreach ($installed_themes as $file) {
+				unlink($skin_set_dir . '/setting_theme_' . $file);
+			}
+			foreach ($installed_skins as $file) {
+				if (file_exists($skin_set_dir . '/setting_' . $file)) {
+					$skin_error = True;
 					break;
 				} else {
-					$pia_skin_error = False;
+					$skin_error = False;
 				}
 			}
-			if ($pia_skin_error == False) {
-				$testskin = fopen($pia_skin_set_dir . 'setting_' . $pia_skin_selector, 'w');
+			if ($skin_error == False) {
+				$testskin = fopen($skin_set_dir . 'setting_' . $skin_selector, 'w');
+				echo $pia_lang['BackDevices_Theme_set'] . ': ' . $_REQUEST['SkinSelection'];
+				echo "<meta http-equiv='refresh' content='2; URL=./maintenance.php?tab=4'>";
+			} else {
+				echo $pia_lang['BackDevices_Theme_notset'];
+				echo "<meta http-equiv='refresh' content='2; URL=./maintenance.php?tab=4'>";
+			}
+		} elseif (in_array($skin_selector, $installed_themes)) {
+			// lösche alle vorherigen skins
+			foreach ($installed_skins as $file) {
+				unlink($skin_set_dir . '/setting_' . $file);
+			}
+			// lösche alle vorherigen themes
+			foreach ($installed_themes as $file) {
+				unlink($skin_set_dir . '/setting_theme_' . $file);
+			}
+			foreach ($installed_skins as $file) {
+				if (file_exists($skin_set_dir . '/setting_theme_' . $file)) {
+					$skin_error = True;
+					break;
+				} else {
+					$skin_error = False;
+				}
+			}
+			if ($skin_error == False) {
+				$testskin = fopen($skin_set_dir . 'setting_theme_' . $skin_selector, 'w');
 				echo $pia_lang['BackDevices_Theme_set'] . ': ' . $_REQUEST['SkinSelection'];
 				echo "<meta http-equiv='refresh' content='2; URL=./maintenance.php?tab=4'>";
 			} else {
@@ -612,7 +709,7 @@ function setTheme() {
 		} else {echo $pia_lang['BackDevices_Theme_invalid'];}
 	}
 	// Logging
-	pialert_logging('a_005', $_SERVER['REMOTE_ADDR'], 'LogStr_0053', '', $pia_skin_selector);
+	pialert_logging('a_005', $_SERVER['REMOTE_ADDR'], 'LogStr_0053', '', $skin_selector);
 }
 
 //  Set Language

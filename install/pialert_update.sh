@@ -144,7 +144,7 @@ clean_files() {
 # ------------------------------------------------------------------------------
 check_packages() {
   sudo apt-get update 2>&1 >>"$LOG"
-  packages=("apt-utils" "sqlite3" "dnsutils" "net-tools" "wakeonlan" "php-curl" "php-xml" "python3-requests" "python3-cryptography" "libwww-perl" "mmdb-bin" "libtext-csv-perl" "aria2")
+  packages=("apt-utils" "sqlite3" "dnsutils" "net-tools" "wakeonlan" "nbtscan" "avahi-utils" "php-curl" "php-xml" "python3-requests" "python3-cryptography" "libwww-perl" "mmdb-bin" "libtext-csv-perl" "aria2")
   print_msg "- Checking packages..."
   missing_packages=()
   for package in "${packages[@]}"; do
@@ -205,32 +205,6 @@ update_config() {
 
   print_msg "- Updating config file..."
 
-# 2023-06-30
-if ! grep -q "MAC_IGNORE_LIST" "$PIALERT_HOME/config/pialert.conf" ; then
-  cat << EOF >> "$PIALERT_HOME/config/pialert.conf"
-
-# MAC_IGNORE_LIST = ['11:22:33:aa:bb:cc']
-EOF
-fi
-
-# 2023-08-10
-if ! grep -q "ARPSCAN_ACTIVE" "$PIALERT_HOME/config/pialert.conf" ; then
-  cat << EOF >> "$PIALERT_HOME/config/pialert.conf"
-
-ARPSCAN_ACTIVE = True
-EOF
-fi
-
-# 2023-08-18
-if ! grep -q "ICMPSCAN_ACTIVE" "$PIALERT_HOME/config/pialert.conf" ; then
-  cat << EOF >> "$PIALERT_HOME/config/pialert.conf"
-
-# Other Modules
-# ----------------------
-ICMPSCAN_ACTIVE = True
-EOF
-fi
-
 # 2023-09-22
 if ! grep -Fq "# Mikrotik Configuration" "$PIALERT_HOME/config/pialert.conf" ; then
   cat << EOF >> "$PIALERT_HOME/config/pialert.conf"
@@ -279,6 +253,24 @@ if ! grep -Fq "# Automatic Speedtest" "$PIALERT_HOME/config/pialert.conf" ; then
 # ----------------------
 SPEEDTEST_TASK_ACTIVE = False
 SPEEDTEST_TASK_HOUR   = []
+EOF
+fi
+
+# 2024-01-28
+if ! grep -Fq "PUSHOVER_PRIO" "$PIALERT_HOME/config/pialert.conf" ; then
+  cat << EOF >> "$PIALERT_HOME/config/pialert.conf"
+
+PUSHOVER_PRIO = 0
+PUSHSAFER_PRIO = 0
+NETWORK_DNS_SERVER = 'localhost'
+EOF
+fi
+
+# 2024-02-08
+if ! grep -Fq "AUTO_UPDATE_CHECK" "$PIALERT_HOME/config/pialert.conf" ; then
+  cat << EOF >> "$PIALERT_HOME/config/pialert.conf"
+
+AUTO_UPDATE_CHECK      = True
 EOF
 fi
 
